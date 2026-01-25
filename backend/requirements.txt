@@ -1,0 +1,11 @@
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+sqlalchemy==2.0.36
+pydantic==2.10.6
+pydantic-settings==2.7.1
+python-dotenv==1.0.0
+python-multipart==0.0.18
+httpx==0.28.1
+yfinance==0.2.65
+anthropic==0.42.0
+python-dateutil==2.8.2
