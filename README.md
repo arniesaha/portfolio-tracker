@@ -2,8 +2,6 @@
 
 Personal web application to track stock investments across Canadian (TSX, TSX-V), US (NASDAQ, NYSE), and Indian (NSE, BSE) markets.
 
-![Dashboard Screenshot](docs/images/dashboard.png)
-
 ## Features
 
 - **Multi-Market Support**: Track stocks from TSX, NYSE, NASDAQ, NSE, BSE
