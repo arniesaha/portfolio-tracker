@@ -22,32 +22,84 @@ const ChartIcon = ({ className }) => (
   </svg>
 );
 
+const RefreshIcon = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+  </svg>
+);
+
+function InitializingState() {
+  return (
+    <div className="container-app py-8">
+      <div className="mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-secondary-900">Dashboard</h1>
+        <p className="text-secondary-500 mt-1">Overview of your investment portfolio</p>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-soft border border-secondary-100 p-8 sm:p-12">
+        <div className="flex flex-col items-center text-center">
+          <div className="relative mb-6">
+            <div className="w-16 h-16 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+          </div>
+          <h2 className="text-xl font-semibold text-secondary-900 mb-2">
+            Loading Portfolio Data
+          </h2>
+          <p className="text-secondary-500 max-w-md">
+            Fetching latest stock prices and calculating portfolio values. This may take a moment on first load...
+          </p>
+          <div className="mt-6 flex items-center gap-2 text-sm text-secondary-400">
+            <RefreshIcon className="w-4 h-4 animate-spin" />
+            <span>Connecting to market data...</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Skeleton cards below */}
+      <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        {[1, 2, 3, 4].map((i) => (
+          <SkeletonCard key={i} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function Dashboard() {
-  const { data: summary, isLoading: summaryLoading, isError: summaryError } = usePortfolioSummary();
+  const {
+    data: summary,
+    isLoading: summaryLoading,
+    isError: summaryError,
+    isFetching: summaryFetching,
+    failureCount,
+    refetch
+  } = usePortfolioSummary();
   const { data: allocation, isLoading: allocationLoading } = useAllocation();
   const { data: performance, isLoading: performanceLoading } = usePerformance();
   const refreshPrices = useRefreshPrices();
 
-  if (summaryLoading) {
+  // Show initializing state when loading or retrying
+  if (summaryLoading || (summaryFetching && !summary)) {
+    return <InitializingState />;
+  }
+
+  // Only show error after all retries have failed and we have no data
+  if (summaryError && !summary) {
     return (
       <div className="container-app py-8">
         <div className="mb-8">
-          <div className="h-8 bg-secondary-200 rounded w-48 animate-pulse" />
+          <h1 className="text-2xl sm:text-3xl font-bold text-secondary-900">Dashboard</h1>
+          <p className="text-secondary-500 mt-1">Overview of your investment portfolio</p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
-          {[1, 2, 3, 4].map((i) => (
-            <SkeletonCard key={i} />
-          ))}
+        <div className="bg-white rounded-xl shadow-soft border border-secondary-100 p-8">
+          <ErrorMessage
+            message="Unable to load portfolio data. The backend may still be starting up."
+          />
+          <div className="mt-4 flex justify-center">
+            <Button onClick={() => refetch()} icon={RefreshIcon}>
+              Try Again
+            </Button>
+          </div>
         </div>
-        <SkeletonChart />
-      </div>
-    );
-  }
-
-  if (summaryError) {
-    return (
-      <div className="container-app py-8">
-        <ErrorMessage message="Failed to load portfolio data. Please check if the backend is running." />
       </div>
     );
   }
