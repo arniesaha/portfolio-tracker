@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { analyticsAPI, pricesAPI, healthCheck } from '../services/api';
+import { analyticsAPI, pricesAPI, healthCheck, appStatus } from '../services/api';
 
 // Health check hook to verify backend is ready
 export const useHealthCheck = () => {
@@ -9,6 +9,23 @@ export const useHealthCheck = () => {
     retry: 10,
     retryDelay: (attemptIndex) => Math.min(1000 * (attemptIndex + 1), 5000),
     staleTime: 30 * 1000,
+  });
+};
+
+// App status hook to track loading state
+export const useAppStatus = (options = {}) => {
+  return useQuery({
+    queryKey: ['appStatus'],
+    queryFn: () => appStatus().then(res => res.data),
+    refetchInterval: (query) => {
+      // Poll every second while loading, stop when ready
+      const data = query.state.data;
+      return data?.ready ? false : 1000;
+    },
+    retry: 3,
+    retryDelay: 500,
+    staleTime: 0, // Always fetch fresh status
+    ...options,
   });
 };
 

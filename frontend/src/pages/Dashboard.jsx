@@ -5,7 +5,7 @@ import SummaryCards from '../components/dashboard/SummaryCards';
 import AllocationCharts from '../components/dashboard/AllocationCharts';
 import TopHoldings from '../components/dashboard/TopHoldings';
 import PortfolioValueChart from '../components/dashboard/PortfolioValueChart';
-import { usePortfolioSummary, useAllocation, usePerformance, useRefreshPrices } from '../hooks/usePortfolio';
+import { usePortfolioSummary, useAllocation, usePerformance, useRefreshPrices, useAppStatus } from '../hooks/usePortfolio';
 import { Link } from 'react-router-dom';
 import Button from '../components/common/Button';
 
@@ -76,14 +76,18 @@ export default function Dashboard() {
   const { data: allocation, isLoading: allocationLoading } = useAllocation();
   const { data: performance, isLoading: performanceLoading } = usePerformance();
   const refreshPrices = useRefreshPrices();
+  const { data: appStatus } = useAppStatus();
 
-  // Show initializing state when loading or retrying
-  if (summaryLoading || (summaryFetching && !summary)) {
+  // Check if backend is still loading initial data
+  const backendLoading = appStatus?.is_loading && !appStatus?.ready;
+
+  // Show initializing state when loading, retrying, or backend is still loading
+  if (summaryLoading || (summaryFetching && !summary) || backendLoading) {
     return <InitializingState />;
   }
 
-  // Only show error after all retries have failed and we have no data
-  if (summaryError && !summary) {
+  // Only show error after all retries have failed, backend is ready, and we have no data
+  if (summaryError && !summary && !backendLoading) {
     return (
       <div className="container-app py-8">
         <div className="mb-8">
@@ -92,7 +96,7 @@ export default function Dashboard() {
         </div>
         <div className="bg-white rounded-xl shadow-soft border border-secondary-100 p-8">
           <ErrorMessage
-            message="Unable to load portfolio data. The backend may still be starting up."
+            message="Unable to load portfolio data. Please check if the backend server is running."
           />
           <div className="mt-4 flex justify-center">
             <Button onClick={() => refetch()} icon={RefreshIcon}>

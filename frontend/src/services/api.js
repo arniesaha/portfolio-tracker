@@ -98,4 +98,7 @@ export const importAPI = {
 // Health check
 export const healthCheck = () => api.get('/health');
 
+// App status (loading state)
+export const appStatus = () => api.get('/status');
+
 export default api;
