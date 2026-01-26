@@ -6,6 +6,7 @@ from decimal import Decimal
 from collections import defaultdict
 from ..database import get_db
 from ..models.holding import Holding
+from ..models.transaction import Transaction
 from ..models.price import PriceHistory
 from ..services.price_service import PriceService
 from ..services.currency_service import CurrencyService
@@ -229,4 +230,212 @@ async def get_portfolio_value_history(days: int = 30, db: Session = Depends(get_
     return {
         "message": "Portfolio value history coming soon",
         "note": "This requires storing historical portfolio snapshots"
+    }
+
+
+@router.get("/realized-gains")
+async def get_realized_gains(db: Session = Depends(get_db)) -> Dict:
+    """
+    Calculate realized gains/losses from completed (SELL) transactions.
+
+    Uses FIFO (First In, First Out) accounting method:
+    - When selling, the oldest purchased shares are sold first
+    - Cost basis is calculated from the actual purchase price of those specific lots
+
+    Same-day sell/buy transactions at identical price and quantity are detected
+    as account transfers and excluded from realized gains calculations.
+    """
+    # Get all holdings (including inactive ones for historical sells)
+    holdings = db.query(Holding).all()
+
+    if not holdings:
+        return {
+            "total_realized_gain_cad": 0,
+            "total_proceeds_cad": 0,
+            "total_cost_basis_cad": 0,
+            "transactions_count": 0,
+            "by_holding": [],
+            "by_year": {},
+            "method": "FIFO"
+        }
+
+    # First, identify true round-trips (account transfers) to exclude
+    # These are same-day sell/buy pairs with identical quantity and price
+    round_trips = set()
+    for holding in holdings:
+        transactions = db.query(Transaction).filter(
+            Transaction.holding_id == holding.id
+        ).order_by(Transaction.transaction_date.asc(), Transaction.id.asc()).all()
+
+        # Group by date
+        by_date = defaultdict(list)
+        for txn in transactions:
+            by_date[txn.transaction_date].append(txn)
+
+        # Find matching sell/buy pairs on same day
+        for date, day_txns in by_date.items():
+            sells = [t for t in day_txns if t.transaction_type == "SELL"]
+            buys = [t for t in day_txns if t.transaction_type == "BUY"]
+
+            for sell in sells:
+                for buy in buys:
+                    # Check if same quantity and price (within small tolerance)
+                    if (abs(float(sell.quantity) - float(buy.quantity)) < 0.0001 and
+                        abs(float(sell.price_per_share) - float(buy.price_per_share)) < 0.01):
+                        round_trips.add((holding.symbol, date, float(sell.quantity), float(sell.price_per_share)))
+
+    total_realized_gain_cad = Decimal("0")
+    total_proceeds_cad = Decimal("0")
+    total_cost_basis_cad = Decimal("0")
+    transactions_count = 0
+    by_holding = []
+    by_year = defaultdict(lambda: Decimal("0"))
+
+    for holding in holdings:
+        # Get all transactions for this holding, ordered by date and id
+        transactions = db.query(Transaction).filter(
+            Transaction.holding_id == holding.id
+        ).order_by(Transaction.transaction_date.asc(), Transaction.id.asc()).all()
+
+        if not transactions:
+            continue
+
+        # FIFO: Track lots as a list of (quantity, price_per_share, fees)
+        fifo_lots = []
+        holding_realized_gain = Decimal("0")
+        holding_proceeds = Decimal("0")
+        holding_cost_basis = Decimal("0")
+        sell_transactions = []
+
+        for txn in transactions:
+            txn_quantity = Decimal(str(txn.quantity))
+            txn_price = Decimal(str(txn.price_per_share))
+            txn_fees = Decimal(str(txn.fees)) if txn.fees else Decimal("0")
+
+            # Check if this is part of a round-trip (account transfer)
+            is_round_trip = (holding.symbol, txn.transaction_date,
+                           float(txn_quantity), float(txn_price)) in round_trips
+
+            if txn.transaction_type == "BUY":
+                # Add new lot to FIFO queue (skip if round-trip)
+                if not is_round_trip:
+                    fifo_lots.append({
+                        "quantity": txn_quantity,
+                        "price": txn_price,
+                        "fees": txn_fees
+                    })
+
+            elif txn.transaction_type == "SELL":
+                # Skip round-trip sells
+                if is_round_trip:
+                    continue
+
+                # Calculate proceeds from this sale
+                proceeds = txn_quantity * txn_price - txn_fees
+
+                # FIFO: Use oldest lots first to determine cost basis
+                remaining_to_sell = txn_quantity
+                cost_basis = Decimal("0")
+                lots_used = []
+
+                while remaining_to_sell > 0 and fifo_lots:
+                    lot = fifo_lots[0]
+
+                    if lot["quantity"] <= remaining_to_sell:
+                        # Use entire lot
+                        cost_basis += lot["quantity"] * lot["price"] + lot["fees"]
+                        lots_used.append(f"{lot['quantity']}@${lot['price']:.2f}")
+                        remaining_to_sell -= lot["quantity"]
+                        fifo_lots.pop(0)
+                    else:
+                        # Use partial lot
+                        cost_basis += remaining_to_sell * lot["price"]
+                        # Proportional fees
+                        cost_basis += lot["fees"] * (remaining_to_sell / lot["quantity"])
+                        lots_used.append(f"{remaining_to_sell}@${lot['price']:.2f}")
+                        # Update remaining lot
+                        lot["fees"] = lot["fees"] * ((lot["quantity"] - remaining_to_sell) / lot["quantity"])
+                        lot["quantity"] -= remaining_to_sell
+                        remaining_to_sell = Decimal("0")
+
+                # Calculate realized gain
+                realized_gain = proceeds - cost_basis
+
+                # Accumulate for this holding
+                holding_realized_gain += realized_gain
+                holding_proceeds += proceeds
+                holding_cost_basis += cost_basis
+
+                # Track by year
+                year = txn.transaction_date.year
+
+                # Convert to CAD if needed
+                if holding.currency != "CAD":
+                    rate = CurrencyService.get_exchange_rate_sync(holding.currency, "CAD", db)
+                    if rate:
+                        realized_gain_cad = realized_gain * rate
+                        proceeds_cad = proceeds * rate
+                        cost_basis_cad_val = cost_basis * rate
+                    else:
+                        realized_gain_cad = realized_gain
+                        proceeds_cad = proceeds
+                        cost_basis_cad_val = cost_basis
+                else:
+                    realized_gain_cad = realized_gain
+                    proceeds_cad = proceeds
+                    cost_basis_cad_val = cost_basis
+
+                by_year[year] += realized_gain_cad
+                total_realized_gain_cad += realized_gain_cad
+                total_proceeds_cad += proceeds_cad
+                total_cost_basis_cad += cost_basis_cad_val
+                transactions_count += 1
+
+                # Calculate average cost for display (cost basis / quantity)
+                avg_cost_display = cost_basis / txn_quantity if txn_quantity > 0 else Decimal("0")
+
+                sell_transactions.append({
+                    "date": txn.transaction_date.isoformat(),
+                    "quantity": float(txn_quantity),
+                    "sell_price": float(txn_price),
+                    "cost_basis": float(avg_cost_display),  # Per-share cost basis
+                    "realized_gain": float(realized_gain),
+                    "realized_gain_cad": float(realized_gain_cad),
+                    "lots_used": ", ".join(lots_used) if lots_used else "N/A"
+                })
+
+        # Only add holdings with sell transactions
+        if sell_transactions:
+            # Convert holding totals to CAD
+            if holding.currency != "CAD":
+                rate = CurrencyService.get_exchange_rate_sync(holding.currency, "CAD", db)
+                if rate:
+                    holding_realized_gain_cad = holding_realized_gain * rate
+                else:
+                    holding_realized_gain_cad = holding_realized_gain
+            else:
+                holding_realized_gain_cad = holding_realized_gain
+
+            by_holding.append({
+                "symbol": holding.symbol,
+                "company_name": holding.company_name,
+                "exchange": holding.exchange,
+                "currency": holding.currency,
+                "realized_gain": float(holding_realized_gain),
+                "realized_gain_cad": float(holding_realized_gain_cad),
+                "transactions_count": len(sell_transactions),
+                "transactions": sell_transactions
+            })
+
+    # Sort by holding with largest realized gains
+    by_holding.sort(key=lambda x: abs(x['realized_gain_cad']), reverse=True)
+
+    return {
+        "total_realized_gain_cad": float(total_realized_gain_cad),
+        "total_proceeds_cad": float(total_proceeds_cad),
+        "total_cost_basis_cad": float(total_cost_basis_cad),
+        "transactions_count": transactions_count,
+        "by_holding": by_holding,
+        "by_year": {str(k): float(v) for k, v in sorted(by_year.items())},
+        "method": "FIFO"
     }

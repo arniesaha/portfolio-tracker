@@ -3,12 +3,11 @@
  *
  * Displays a line chart showing portfolio value over time with:
  * - Portfolio value trend line
- * - Cost basis comparison
  * - Gain/loss shaded area
  * - Time period selector (7D, 30D, 90D, 1Y, ALL)
  */
 import { useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import { usePortfolioHistory } from '../../hooks/usePortfolioHistory';
 import Card from '../common/Card';
 import LoadingSpinner from '../common/LoadingSpinner';
@@ -69,7 +68,6 @@ export default function PortfolioValueChart() {
     }),
     fullDate: snapshot.snapshot_date,
     value: parseFloat(snapshot.total_value_cad),
-    cost: parseFloat(snapshot.total_cost_cad),
     gain: parseFloat(snapshot.unrealized_gain_cad),
   }));
 
@@ -82,7 +80,6 @@ export default function PortfolioValueChart() {
       date: today,
       fullDate: new Date().toISOString().split('T')[0],
       value: parseFloat(historyData.current_value),
-      cost: parseFloat(lastSnapshot.total_cost_cad),
       gain: parseFloat(historyData.current_value) - parseFloat(lastSnapshot.total_cost_cad),
     });
   }
@@ -113,10 +110,6 @@ export default function PortfolioValueChart() {
             <div className="flex justify-between gap-4">
               <span className="text-sm text-gray-600">Portfolio Value:</span>
               <span className="text-sm font-semibold text-gray-900">{formatCurrency(data.value)}</span>
-            </div>
-            <div className="flex justify-between gap-4">
-              <span className="text-sm text-gray-600">Cost Basis:</span>
-              <span className="text-sm font-semibold text-gray-600">{formatCurrency(data.cost)}</span>
             </div>
             <div className="flex justify-between gap-4 pt-1 border-t border-gray-200">
               <span className="text-sm text-gray-600">Gain/Loss:</span>
@@ -176,14 +169,6 @@ export default function PortfolioValueChart() {
               <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
               <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
             </linearGradient>
-            <linearGradient id="colorGain" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-              <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-            </linearGradient>
-            <linearGradient id="colorLoss" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3} />
-              <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
-            </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
           <XAxis
@@ -200,22 +185,6 @@ export default function PortfolioValueChart() {
             domain={['dataMin - 1000', 'dataMax + 1000']}
           />
           <Tooltip content={<CustomTooltip />} />
-          <Legend
-            wrapperStyle={{ fontSize: '14px', paddingTop: '20px' }}
-            iconType="line"
-          />
-
-          {/* Cost basis line */}
-          <Line
-            type="monotone"
-            dataKey="cost"
-            stroke="#9ca3af"
-            strokeWidth={2}
-            strokeDasharray="5 5"
-            dot={false}
-            name="Cost Basis"
-            activeDot={{ r: 4 }}
-          />
 
           {/* Portfolio value area */}
           <Area
