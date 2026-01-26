@@ -1,4 +1,5 @@
 import yfinance as yf
+import pandas as pd
 from typing import Dict, Optional, List
 from datetime import datetime, timedelta, date as date_type
 from decimal import Decimal
@@ -126,16 +127,94 @@ class PriceService:
     @classmethod
     def get_prices_bulk(cls, symbols: List[tuple]) -> Dict[str, Optional[Decimal]]:
         """
-        Get prices for multiple symbols.
+        Get prices for multiple symbols using batch download.
+
+        Uses yf.download() for uncached symbols to fetch all at once,
+        significantly reducing load time compared to sequential fetching.
+
         Args:
             symbols: List of (symbol, exchange) tuples
         Returns:
             Dictionary mapping symbol to price
         """
         results = {}
+        symbols_to_fetch = []  # List of (symbol, exchange, yf_symbol) needing API fetch
+
+        # Check cache first for each symbol
         for symbol, exchange in symbols:
-            price = cls.get_current_price(symbol, exchange)
-            results[symbol] = price
+            cache_key = f"{symbol}:{exchange}"
+            if cache_key in cls._price_cache:
+                cached = cls._price_cache[cache_key]
+                if datetime.now() - cached['timestamp'] < cls._cache_duration:
+                    logger.debug(f"Using cached price for {symbol}")
+                    results[symbol] = cached['price']
+                    continue
+
+            # Need to fetch this one
+            yf_symbol = cls._get_yfinance_symbol(symbol, exchange)
+            symbols_to_fetch.append((symbol, exchange, yf_symbol))
+
+        # If all prices were cached, return early
+        if not symbols_to_fetch:
+            logger.info("All prices served from cache")
+            return results
+
+        # Batch download all uncached symbols at once
+        yf_symbols = [item[2] for item in symbols_to_fetch]
+        logger.info(f"Batch fetching {len(yf_symbols)} symbols: {yf_symbols}")
+
+        try:
+            # Use yf.download() for batch fetching - much faster than individual requests
+            # threads=True enables parallel downloading
+            # progress=False disables progress bar for cleaner logs
+            # auto_adjust=True uses adjusted close prices (default in newer yfinance)
+            data = yf.download(
+                yf_symbols,
+                period='1d',
+                progress=False,
+                threads=True,
+                ignore_tz=True,
+                auto_adjust=True
+            )
+
+            if data.empty:
+                logger.warning("Batch download returned empty data")
+                # Fall back to individual fetching
+                for symbol, exchange, _ in symbols_to_fetch:
+                    results[symbol] = cls.get_current_price(symbol, exchange)
+                return results
+
+            # Process results - yfinance returns MultiIndex columns (field, symbol)
+            now = datetime.now()
+
+            for symbol, exchange, yf_symbol in symbols_to_fetch:
+                try:
+                    # Access close price for this symbol via MultiIndex
+                    if ('Close', yf_symbol) in data.columns:
+                        close_data = data[('Close', yf_symbol)]
+                        if not close_data.empty:
+                            price_val = close_data.iloc[-1]
+                            if pd.notna(price_val):
+                                price = Decimal(str(float(price_val)))
+                                cache_key = f"{symbol}:{exchange}"
+                                cls._price_cache[cache_key] = {'price': price, 'timestamp': now}
+                                results[symbol] = price
+                                logger.info(f"Batch fetched {symbol}: {price}")
+                                continue
+
+                    # Symbol not found in batch results
+                    logger.warning(f"No data for {symbol} ({yf_symbol}) in batch response")
+                    results[symbol] = None
+
+                except Exception as e:
+                    logger.error(f"Error processing {symbol} from batch: {e}")
+                    results[symbol] = None
+
+        except Exception as e:
+            logger.error(f"Batch download failed: {e}, falling back to individual fetch")
+            # Fall back to individual fetching on batch failure
+            for symbol, exchange, _ in symbols_to_fetch:
+                results[symbol] = cls.get_current_price(symbol, exchange)
 
         return results
 

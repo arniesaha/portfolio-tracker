@@ -1,14 +1,16 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider, useQueryClient } from '@tanstack/react-query';
-import { ToastProvider } from './components/common/Toast';
+import { ToastProvider, useToast } from './components/common/Toast';
 import Header from './components/layout/Header';
 import Navigation from './components/layout/Navigation';
 import Dashboard from './pages/Dashboard';
 import Holdings from './pages/Holdings';
 import Transactions from './pages/Transactions';
 import News from './pages/News';
+import ImportModal from './components/import/ImportModal';
 import { useRefreshPrices, usePortfolioSummary, useAppStatus } from './hooks/usePortfolio';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { holdingsAPI, transactionsAPI } from './services/api';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -78,6 +80,8 @@ function AppContent() {
   const { data: summary, refetch: refetchSummary } = usePortfolioSummary();
   const { data: status } = useAppStatus();
   const wasLoadingRef = useRef(true);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const { showToast } = useToast();
 
   // Auto-refresh data when loading completes
   useEffect(() => {
@@ -96,6 +100,82 @@ function AppContent() {
     await refreshPrices.mutateAsync();
   };
 
+  const handleImport = useCallback(() => {
+    setIsImportModalOpen(true);
+  }, []);
+
+  const handleExport = useCallback(async () => {
+    try {
+      // Fetch all holdings and transactions
+      const [holdingsRes, transactionsRes] = await Promise.all([
+        holdingsAPI.getAll(),
+        transactionsAPI.getAll()
+      ]);
+
+      const holdings = holdingsRes.data;
+      const transactions = transactionsRes.data;
+
+      // Generate Holdings CSV
+      const holdingsCSV = [
+        ['Symbol', 'Company Name', 'Exchange', 'Country', 'Quantity', 'Avg Purchase Price', 'Currency', 'First Purchase Date', 'Notes'].join(','),
+        ...holdings.map(h => [
+          h.symbol,
+          `"${(h.company_name || '').replace(/"/g, '""')}"`,
+          h.exchange,
+          h.country,
+          h.quantity,
+          h.avg_purchase_price,
+          h.currency,
+          h.first_purchase_date || '',
+          `"${(h.notes || '').replace(/"/g, '""')}"`
+        ].join(','))
+      ].join('\n');
+
+      // Generate Transactions CSV
+      const transactionsCSV = [
+        ['Date', 'Symbol', 'Type', 'Quantity', 'Price Per Share', 'Fees', 'Notes'].join(','),
+        ...transactions.map(t => [
+          t.transaction_date,
+          t.symbol,
+          t.transaction_type,
+          t.quantity,
+          t.price_per_share,
+          t.fees || 0,
+          `"${(t.notes || '').replace(/"/g, '""')}"`
+        ].join(','))
+      ].join('\n');
+
+      // Download Holdings CSV
+      const holdingsBlob = new Blob([holdingsCSV], { type: 'text/csv' });
+      const holdingsUrl = URL.createObjectURL(holdingsBlob);
+      const holdingsLink = document.createElement('a');
+      holdingsLink.href = holdingsUrl;
+      holdingsLink.download = `portfolio-holdings-${new Date().toISOString().split('T')[0]}.csv`;
+      holdingsLink.click();
+      URL.revokeObjectURL(holdingsUrl);
+
+      // Download Transactions CSV (slight delay to avoid browser blocking)
+      setTimeout(() => {
+        const transactionsBlob = new Blob([transactionsCSV], { type: 'text/csv' });
+        const transactionsUrl = URL.createObjectURL(transactionsBlob);
+        const transactionsLink = document.createElement('a');
+        transactionsLink.href = transactionsUrl;
+        transactionsLink.download = `portfolio-transactions-${new Date().toISOString().split('T')[0]}.csv`;
+        transactionsLink.click();
+        URL.revokeObjectURL(transactionsUrl);
+      }, 100);
+
+      showToast('Exported holdings and transactions to CSV', 'success');
+    } catch (error) {
+      console.error('Export failed:', error);
+      showToast('Failed to export data', 'error');
+    }
+  }, [showToast]);
+
+  const handlePreferences = useCallback(() => {
+    showToast('Preferences coming soon', 'info');
+  }, [showToast]);
+
   // Show loading overlay while backend is loading initial data
   const showLoadingOverlay = status?.is_loading && !status?.ready;
 
@@ -106,6 +186,9 @@ function AppContent() {
         onRefresh={summary?.holdings_count > 0 ? handleRefresh : null}
         isRefreshing={refreshPrices.isPending}
         lastUpdated={summary?.last_updated}
+        onImport={handleImport}
+        onExport={handleExport}
+        onPreferences={handlePreferences}
       />
       <Navigation />
       <main className="pb-8">
@@ -116,6 +199,12 @@ function AppContent() {
           <Route path="/news" element={<News />} />
         </Routes>
       </main>
+
+      {/* Import Modal */}
+      <ImportModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+      />
     </div>
   );
 }

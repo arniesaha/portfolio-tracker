@@ -5,7 +5,7 @@ import SummaryCards from '../components/dashboard/SummaryCards';
 import AllocationCharts from '../components/dashboard/AllocationCharts';
 import TopHoldings from '../components/dashboard/TopHoldings';
 import PortfolioValueChart from '../components/dashboard/PortfolioValueChart';
-import { usePortfolioSummary, useAllocation, usePerformance, useRefreshPrices, useAppStatus } from '../hooks/usePortfolio';
+import { usePortfolioSummary, useAllocation, usePerformance, useRefreshPrices, useAppStatus, useRealizedGains } from '../hooks/usePortfolio';
 import { Link } from 'react-router-dom';
 import Button from '../components/common/Button';
 
@@ -75,6 +75,7 @@ export default function Dashboard() {
   } = usePortfolioSummary();
   const { data: allocation, isLoading: allocationLoading } = useAllocation();
   const { data: performance, isLoading: performanceLoading } = usePerformance();
+  const { data: realizedGains, isLoading: realizedGainsLoading } = useRealizedGains();
   const refreshPrices = useRefreshPrices();
   const { data: appStatus } = useAppStatus();
 
@@ -135,7 +136,7 @@ export default function Dashboard() {
         <div className="space-y-6 sm:space-y-8">
           {/* Summary Cards */}
           <section>
-            <SummaryCards summary={summary} isLoading={summaryLoading} />
+            <SummaryCards summary={summary} realizedGains={realizedGains} isLoading={summaryLoading || realizedGainsLoading} />
           </section>
 
           {/* Portfolio Value Chart */}

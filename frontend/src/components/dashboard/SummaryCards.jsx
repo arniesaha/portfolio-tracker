@@ -9,19 +9,6 @@ const WalletIcon = ({ className }) => (
   </svg>
 );
 
-const BankIcon = ({ className }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M3 21h18" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M3 10h18" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M5 6l7-3 7 3" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M4 10v11" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M20 10v11" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M8 14v3" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M12 14v3" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M16 14v3" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
 const TrendUpIcon = ({ className }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <path d="M23 6l-9.5 9.5-5-5L1 18" strokeLinecap="round" strokeLinejoin="round" />
@@ -35,6 +22,13 @@ const CalendarIcon = ({ className }) => (
     <path d="M16 2v4" strokeLinecap="round" strokeLinejoin="round" />
     <path d="M8 2v4" strokeLinecap="round" strokeLinejoin="round" />
     <path d="M3 10h18" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const CheckCircleIcon = ({ className }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M22 4L12 14.01l-3-3" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
@@ -86,7 +80,7 @@ function StatCard({ title, value, subtitle, trend, icon: Icon, iconBgColor, icon
   );
 }
 
-export default function SummaryCards({ summary, isLoading }) {
+export default function SummaryCards({ summary, realizedGains, isLoading }) {
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -101,6 +95,9 @@ export default function SummaryCards({ summary, isLoading }) {
     return null;
   }
 
+  const hasRealizedGains = realizedGains && realizedGains.transactions_count > 0;
+  const realizedGainValue = realizedGains?.total_realized_gain_cad || 0;
+
   const cards = [
     {
       title: 'Total Portfolio Value',
@@ -111,14 +108,6 @@ export default function SummaryCards({ summary, isLoading }) {
       iconColor: 'text-primary-600',
     },
     {
-      title: 'Total Cost Basis',
-      value: formatCurrency(summary.total_cost_cad, 'CAD'),
-      subtitle: 'Total invested',
-      icon: BankIcon,
-      iconBgColor: 'bg-secondary-100',
-      iconColor: 'text-secondary-600',
-    },
-    {
       title: 'Unrealized Gain/Loss',
       value: formatCurrency(summary.unrealized_gain_cad, 'CAD'),
       subtitle: formatPercent(summary.unrealized_gain_pct),
@@ -126,6 +115,17 @@ export default function SummaryCards({ summary, isLoading }) {
       icon: TrendUpIcon,
       iconBgColor: summary.unrealized_gain_pct >= 0 ? 'bg-success-100' : 'bg-danger-100',
       iconColor: summary.unrealized_gain_pct >= 0 ? 'text-success-600' : 'text-danger-600',
+    },
+    {
+      title: 'Realized Gain/Loss',
+      value: formatCurrency(realizedGainValue, 'CAD'),
+      subtitle: hasRealizedGains
+        ? `${realizedGains.transactions_count} sale${realizedGains.transactions_count !== 1 ? 's' : ''}`
+        : 'No sales yet',
+      trend: hasRealizedGains ? realizedGainValue : undefined,
+      icon: CheckCircleIcon,
+      iconBgColor: realizedGainValue >= 0 ? 'bg-success-100' : 'bg-danger-100',
+      iconColor: realizedGainValue >= 0 ? 'text-success-600' : 'text-danger-600',
     },
     {
       title: "Today's Change",

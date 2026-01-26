@@ -57,6 +57,15 @@ export const usePerformance = () => {
   });
 };
 
+export const useRealizedGains = () => {
+  return useQuery({
+    queryKey: ['portfolio', 'realizedGains'],
+    queryFn: () => analyticsAPI.getRealizedGains().then(res => res.data),
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(2000 * (attemptIndex + 1), 10000),
+  });
+};
+
 export const useCurrentPrices = () => {
   return useQuery({
     queryKey: ['prices', 'current'],

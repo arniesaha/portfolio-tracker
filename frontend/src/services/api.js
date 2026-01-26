@@ -40,6 +40,7 @@ export const analyticsAPI = {
   getAllocation: () => api.get('/analytics/allocation'),
   getPerformance: () => api.get('/analytics/performance'),
   getPortfolioValue: (days = 30) => api.get('/analytics/portfolio-value', { params: { days } }),
+  getRealizedGains: () => api.get('/analytics/realized-gains'),
 };
 
 // Snapshots API

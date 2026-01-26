@@ -316,7 +316,7 @@
 
   .dropdown-item {
     @apply block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-50
-           hover:text-secondary-900 transition-colors;
+           hover:text-secondary-900 transition-colors cursor-pointer;
   }
 
   /* Progress bar */
