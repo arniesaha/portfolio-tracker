@@ -68,16 +68,16 @@ const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
-      <div className="bg-white px-4 py-3 border border-secondary-200 rounded-lg shadow-lg">
-        <p className="font-semibold text-secondary-900">{data.name}</p>
-        <p className="text-sm text-secondary-600 mt-1">
+      <div className="bg-white dark:bg-secondary-800 px-4 py-3 border border-secondary-200 dark:border-secondary-700 rounded-lg shadow-lg">
+        <p className="font-semibold text-secondary-900 dark:text-secondary-100">{data.name}</p>
+        <p className="text-sm text-secondary-600 dark:text-secondary-400 mt-1">
           <span className="font-medium">{formatCurrency(data.value_cad, 'CAD')}</span>
         </p>
-        <p className="text-sm text-secondary-500">
+        <p className="text-sm text-secondary-500 dark:text-secondary-400">
           {data.allocation_pct.toFixed(1)}% of portfolio
         </p>
         {data.gain_pct !== undefined && (
-          <p className={`text-sm mt-1 ${data.gain_pct >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+          <p className={`text-sm mt-1 ${data.gain_pct >= 0 ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400'}`}>
             {data.gain_pct >= 0 ? '+' : ''}{data.gain_pct.toFixed(1)}% return
           </p>
         )}
@@ -96,9 +96,9 @@ const CustomLegend = ({ payload }) => {
             className="w-3 h-3 rounded-full"
             style={{ backgroundColor: entry.color }}
           />
-          <span className="text-sm text-secondary-600">
+          <span className="text-sm text-secondary-600 dark:text-secondary-400">
             {entry.value}
-            <span className="font-medium text-secondary-900 ml-1">
+            <span className="font-medium text-secondary-900 dark:text-secondary-100 ml-1">
               ({entry.payload.allocation_pct.toFixed(1)}%)
             </span>
           </span>
@@ -112,13 +112,13 @@ const CustomLegend = ({ payload }) => {
 function TaxBadge({ isTaxAdvantaged }) {
   if (isTaxAdvantaged) {
     return (
-      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300">
         Tax-Free
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300">
       Taxable
     </span>
   );
@@ -129,8 +129,8 @@ export default function AccountBreakdownChart() {
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-xl shadow-soft border border-secondary-100 p-6">
-        <div className="h-4 w-48 bg-secondary-200 rounded animate-pulse mb-4" />
+      <div className="bg-white dark:bg-secondary-900 rounded-xl shadow-soft dark:shadow-none border border-secondary-100 dark:border-secondary-800 p-6">
+        <div className="h-4 w-48 bg-secondary-200 dark:bg-secondary-700 rounded animate-pulse mb-4" />
         <SkeletonChart />
       </div>
     );
@@ -158,10 +158,10 @@ export default function AccountBreakdownChart() {
 
   if (chartData.length === 0) {
     return (
-      <div className="bg-white rounded-xl shadow-soft border border-secondary-100 p-6">
-        <h3 className="text-lg font-semibold text-secondary-900 mb-2">Account Breakdown</h3>
-        <p className="text-sm text-secondary-500 mb-4">Distribution by account type</p>
-        <div className="flex items-center justify-center h-[200px] text-secondary-400">
+      <div className="bg-white dark:bg-secondary-900 rounded-xl shadow-soft dark:shadow-none border border-secondary-100 dark:border-secondary-800 p-6">
+        <h3 className="text-lg font-semibold text-secondary-900 dark:text-secondary-100 mb-2">Account Breakdown</h3>
+        <p className="text-sm text-secondary-500 dark:text-secondary-400 mb-4">Distribution by account type</p>
+        <div className="flex items-center justify-center h-[200px] text-secondary-400 dark:text-secondary-500">
           <div className="text-center">
             <p className="text-sm">No account types assigned yet.</p>
             <p className="text-xs mt-1">Assign account types to your holdings to see the breakdown.</p>
@@ -172,21 +172,21 @@ export default function AccountBreakdownChart() {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-soft border border-secondary-100 p-6">
+    <div className="bg-white dark:bg-secondary-900 rounded-xl shadow-soft dark:shadow-none border border-secondary-100 dark:border-secondary-800 p-6">
       <div className="mb-4">
-        <h3 className="text-lg font-semibold text-secondary-900">Account Breakdown</h3>
-        <p className="text-sm text-secondary-500 mt-0.5">Distribution by account type (TFSA, RRSP, etc.)</p>
+        <h3 className="text-lg font-semibold text-secondary-900 dark:text-secondary-100">Account Breakdown</h3>
+        <p className="text-sm text-secondary-500 dark:text-secondary-400 mt-0.5">Distribution by account type (TFSA, RRSP, etc.)</p>
       </div>
 
       {/* Tax Summary Bar */}
-      <div className="mb-6 p-4 bg-secondary-50 rounded-lg">
+      <div className="mb-6 p-4 bg-secondary-50 dark:bg-secondary-800 rounded-lg">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 mb-2">
-          <span className="text-sm font-medium text-secondary-700">Tax-Advantaged vs Taxable</span>
-          <span className="text-sm text-secondary-500">
+          <span className="text-sm font-medium text-secondary-700 dark:text-secondary-300">Tax-Advantaged vs Taxable</span>
+          <span className="text-sm text-secondary-500 dark:text-secondary-400">
             {formatPercent(tax_advantaged_pct)} tax-advantaged
           </span>
         </div>
-        <div className="h-4 bg-secondary-200 rounded-full overflow-hidden flex">
+        <div className="h-4 bg-secondary-200 dark:bg-secondary-700 rounded-full overflow-hidden flex">
           <div
             className="h-full bg-green-500 transition-all duration-500"
             style={{ width: `${tax_advantaged_pct}%` }}
@@ -198,7 +198,7 @@ export default function AccountBreakdownChart() {
             title={`Taxable: ${formatCurrency(taxable_total, 'CAD')}`}
           />
         </div>
-        <div className="flex justify-between mt-2 text-xs text-secondary-500">
+        <div className="flex justify-between mt-2 text-xs text-secondary-500 dark:text-secondary-400">
           <span className="flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-green-500"></span>
             Tax-Free: {formatCurrency(tax_advantaged_total, 'CAD')}
@@ -241,19 +241,19 @@ export default function AccountBreakdownChart() {
       </ResponsiveContainer>
 
       {/* Account Details Table */}
-      <div className="mt-4 border-t border-secondary-100 pt-4">
+      <div className="mt-4 border-t border-secondary-100 dark:border-secondary-800 pt-4">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-secondary-500 text-left">
+            <tr className="text-secondary-500 dark:text-secondary-400 text-left">
               <th className="pb-2 font-medium">Account</th>
               <th className="pb-2 font-medium text-right">Value</th>
               <th className="pb-2 font-medium text-right">Return</th>
               <th className="pb-2 font-medium text-right hidden sm:table-cell">Holdings</th>
             </tr>
           </thead>
-          <tbody className="text-secondary-900">
+          <tbody className="text-secondary-900 dark:text-secondary-100">
             {chartData.map((account) => (
-              <tr key={account.code} className="border-t border-secondary-50">
+              <tr key={account.code} className="border-t border-secondary-50 dark:border-secondary-800">
                 <td className="py-2">
                   <div className="flex items-center gap-2">
                     <span
@@ -269,10 +269,10 @@ export default function AccountBreakdownChart() {
                 <td className="py-2 text-right font-medium">
                   {formatCurrency(account.value_cad, 'CAD')}
                 </td>
-                <td className={`py-2 text-right ${account.gain_pct >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                <td className={`py-2 text-right ${account.gain_pct >= 0 ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400'}`}>
                   {account.gain_pct >= 0 ? '+' : ''}{account.gain_pct.toFixed(1)}%
                 </td>
-                <td className="py-2 text-right text-secondary-500 hidden sm:table-cell">
+                <td className="py-2 text-right text-secondary-500 dark:text-secondary-400 hidden sm:table-cell">
                   {account.holdings_count}
                 </td>
               </tr>

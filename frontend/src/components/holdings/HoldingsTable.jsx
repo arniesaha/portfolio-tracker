@@ -23,35 +23,35 @@ const FolderIcon = ({ className }) => (
 
 // Country badge colors
 const COUNTRY_STYLES = {
-  CA: 'bg-red-100 text-red-700',
-  US: 'bg-blue-100 text-blue-700',
-  IN: 'bg-orange-100 text-orange-700',
+  CA: 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300',
+  US: 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300',
+  IN: 'bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300',
 };
 
 // Exchange badge colors
 const EXCHANGE_STYLES = {
-  TSX: 'bg-red-50 text-red-600 ring-red-500/20',
-  'TSX-V': 'bg-red-50 text-red-500 ring-red-500/20',
-  NASDAQ: 'bg-blue-50 text-blue-600 ring-blue-500/20',
-  NYSE: 'bg-blue-50 text-blue-500 ring-blue-500/20',
-  NSE: 'bg-orange-50 text-orange-600 ring-orange-500/20',
-  BSE: 'bg-orange-50 text-orange-500 ring-orange-500/20',
+  TSX: 'bg-red-50 text-red-600 ring-red-500/20 dark:bg-red-900/30 dark:text-red-400',
+  'TSX-V': 'bg-red-50 text-red-500 ring-red-500/20 dark:bg-red-900/30 dark:text-red-400',
+  NASDAQ: 'bg-blue-50 text-blue-600 ring-blue-500/20 dark:bg-blue-900/30 dark:text-blue-400',
+  NYSE: 'bg-blue-50 text-blue-500 ring-blue-500/20 dark:bg-blue-900/30 dark:text-blue-400',
+  NSE: 'bg-orange-50 text-orange-600 ring-orange-500/20 dark:bg-orange-900/30 dark:text-orange-400',
+  BSE: 'bg-orange-50 text-orange-500 ring-orange-500/20 dark:bg-orange-900/30 dark:text-orange-400',
 };
 
 // Account type badge colors
 const ACCOUNT_STYLES = {
-  TFSA: 'bg-green-100 text-green-700',
-  RRSP: 'bg-blue-100 text-blue-700',
-  FHSA: 'bg-purple-100 text-purple-700',
-  RESP: 'bg-amber-100 text-amber-700',
-  LIRA: 'bg-indigo-100 text-indigo-700',
-  RRIF: 'bg-sky-100 text-sky-700',
-  NON_REG: 'bg-red-100 text-red-700',
-  MARGIN: 'bg-orange-100 text-orange-700',
-  DEMAT: 'bg-teal-100 text-teal-700',
-  MF_INDIA: 'bg-violet-100 text-violet-700',
-  NRO: 'bg-pink-100 text-pink-700',
-  NRE: 'bg-rose-100 text-rose-700',
+  TFSA: 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300',
+  RRSP: 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300',
+  FHSA: 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300',
+  RESP: 'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300',
+  LIRA: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300',
+  RRIF: 'bg-sky-100 text-sky-700 dark:bg-sky-900/50 dark:text-sky-300',
+  NON_REG: 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300',
+  MARGIN: 'bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300',
+  DEMAT: 'bg-teal-100 text-teal-700 dark:bg-teal-900/50 dark:text-teal-300',
+  MF_INDIA: 'bg-violet-100 text-violet-700 dark:bg-violet-900/50 dark:text-violet-300',
+  NRO: 'bg-pink-100 text-pink-700 dark:bg-pink-900/50 dark:text-pink-300',
+  NRE: 'bg-rose-100 text-rose-700 dark:bg-rose-900/50 dark:text-rose-300',
 };
 
 const ACCOUNT_NAMES = {
@@ -84,73 +84,73 @@ export default function HoldingsTable({ holdings, onEdit, onDelete }) {
     <div className="overflow-x-auto">
       <table className="min-w-full">
         <thead>
-          <tr className="bg-secondary-50 border-b border-secondary-200">
-            <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-600 uppercase tracking-wider">
+          <tr className="bg-secondary-50 dark:bg-secondary-800 border-b border-secondary-200 dark:border-secondary-700">
+            <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
               Stock
             </th>
-            <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-600 uppercase tracking-wider">
+            <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
               Account
             </th>
-            <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-600 uppercase tracking-wider">
+            <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
               Exchange
             </th>
-            <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-600 uppercase tracking-wider hidden lg:table-cell">
+            <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider hidden lg:table-cell">
               Country
             </th>
-            <th className="px-6 py-4 text-right text-xs font-semibold text-secondary-600 uppercase tracking-wider">
+            <th className="px-6 py-4 text-right text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
               Quantity
             </th>
-            <th className="px-6 py-4 text-right text-xs font-semibold text-secondary-600 uppercase tracking-wider">
+            <th className="px-6 py-4 text-right text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
               Avg Cost
             </th>
-            <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-600 uppercase tracking-wider hidden md:table-cell">
+            <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider hidden md:table-cell">
               First Purchase
             </th>
-            <th className="px-6 py-4 text-right text-xs font-semibold text-secondary-600 uppercase tracking-wider">
+            <th className="px-6 py-4 text-right text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
               Actions
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-secondary-100">
+        <tbody className="divide-y divide-secondary-100 dark:divide-secondary-800">
           {holdings.map((holding, index) => (
             <tr
               key={holding.id}
-              className={`hover:bg-secondary-50 transition-colors ${index % 2 === 1 ? 'bg-secondary-50/50' : ''}`}
+              className={`hover:bg-secondary-50 dark:hover:bg-secondary-800/50 transition-colors ${index % 2 === 1 ? 'bg-secondary-50/50 dark:bg-secondary-800/30' : ''}`}
             >
               <td className="px-6 py-4 whitespace-nowrap">
                 <div>
-                  <div className="text-sm font-semibold text-secondary-900">{holding.symbol}</div>
-                  <div className="text-xs text-secondary-500 truncate max-w-[200px]">
+                  <div className="text-sm font-semibold text-secondary-900 dark:text-secondary-100">{holding.symbol}</div>
+                  <div className="text-xs text-secondary-500 dark:text-secondary-400 truncate max-w-[200px]">
                     {holding.company_name || '-'}
                   </div>
                 </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 {holding.account_type ? (
-                  <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${ACCOUNT_STYLES[holding.account_type] || 'bg-secondary-100 text-secondary-700'}`}>
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${ACCOUNT_STYLES[holding.account_type] || 'bg-secondary-100 text-secondary-700 dark:bg-secondary-800 dark:text-secondary-300'}`}>
                     {ACCOUNT_NAMES[holding.account_type] || holding.account_type}
                   </span>
                 ) : (
-                  <span className="text-xs text-secondary-400 italic">Not set</span>
+                  <span className="text-xs text-secondary-400 dark:text-secondary-500 italic">Not set</span>
                 )}
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
-                <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ring-1 ring-inset ${EXCHANGE_STYLES[holding.exchange] || 'bg-secondary-50 text-secondary-600 ring-secondary-500/20'}`}>
+                <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ring-1 ring-inset ${EXCHANGE_STYLES[holding.exchange] || 'bg-secondary-50 text-secondary-600 ring-secondary-500/20 dark:bg-secondary-800 dark:text-secondary-400'}`}>
                   {holding.exchange}
                 </span>
               </td>
               <td className="px-6 py-4 whitespace-nowrap hidden lg:table-cell">
-                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${COUNTRY_STYLES[holding.country] || 'bg-secondary-100 text-secondary-700'}`}>
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${COUNTRY_STYLES[holding.country] || 'bg-secondary-100 text-secondary-700 dark:bg-secondary-800 dark:text-secondary-300'}`}>
                   {holding.country}
                 </span>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-secondary-900 tabular-nums font-medium">
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-secondary-900 dark:text-secondary-100 tabular-nums font-medium">
                 {formatNumber(holding.quantity, 4)}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-secondary-900 tabular-nums">
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-secondary-900 dark:text-secondary-100 tabular-nums">
                 {formatCurrency(holding.avg_purchase_price, holding.currency)}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary-500 hidden md:table-cell">
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary-500 dark:text-secondary-400 hidden md:table-cell">
                 {formatDate(holding.first_purchase_date)}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right">

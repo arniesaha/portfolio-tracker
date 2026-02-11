@@ -50,9 +50,9 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white px-4 py-3 border border-secondary-200 rounded-lg shadow-lg">
-        <p className="font-semibold text-secondary-900">{payload[0].name}</p>
-        <p className="text-sm text-secondary-600 mt-1">
+      <div className="bg-white dark:bg-secondary-800 px-4 py-3 border border-secondary-200 dark:border-secondary-700 rounded-lg shadow-lg">
+        <p className="font-semibold text-secondary-900 dark:text-secondary-100">{payload[0].name}</p>
+        <p className="text-sm text-secondary-600 dark:text-secondary-400 mt-1">
           <span className="font-medium">{payload[0].value.toFixed(1)}%</span> of portfolio
         </p>
       </div>
@@ -70,9 +70,9 @@ const CustomLegend = ({ payload }) => {
             className="w-3 h-3 rounded-full"
             style={{ backgroundColor: entry.color }}
           />
-          <span className="text-sm text-secondary-600">
+          <span className="text-sm text-secondary-600 dark:text-secondary-400">
             {entry.value}
-            <span className="font-medium text-secondary-900 ml-1">
+            <span className="font-medium text-secondary-900 dark:text-secondary-100 ml-1">
               ({entry.payload.value.toFixed(1)}%)
             </span>
           </span>
@@ -84,13 +84,13 @@ const CustomLegend = ({ payload }) => {
 
 function ChartCard({ title, subtitle, children, isEmpty }) {
   return (
-    <div className="bg-white rounded-xl shadow-soft border border-secondary-100 p-6">
+    <div className="bg-white dark:bg-secondary-900 rounded-xl shadow-soft dark:shadow-none border border-secondary-100 dark:border-secondary-800 p-6">
       <div className="mb-4">
-        <h3 className="text-lg font-semibold text-secondary-900">{title}</h3>
-        {subtitle && <p className="text-sm text-secondary-500 mt-0.5">{subtitle}</p>}
+        <h3 className="text-lg font-semibold text-secondary-900 dark:text-secondary-100">{title}</h3>
+        {subtitle && <p className="text-sm text-secondary-500 dark:text-secondary-400 mt-0.5">{subtitle}</p>}
       </div>
       {isEmpty ? (
-        <div className="flex items-center justify-center h-[300px] text-secondary-400">
+        <div className="flex items-center justify-center h-[300px] text-secondary-400 dark:text-secondary-500">
           <div className="text-center">
             <svg className="w-12 h-12 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />

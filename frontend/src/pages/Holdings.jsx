@@ -56,8 +56,8 @@ export default function Holdings() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-secondary-900">Holdings</h1>
-          <p className="text-secondary-500 mt-1">Manage your investment portfolio</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-secondary-100">Holdings</h1>
+          <p className="text-secondary-500 dark:text-secondary-400 mt-1">Manage your investment portfolio</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           {/* Account Type Filter */}
@@ -66,7 +66,7 @@ export default function Holdings() {
             <select
               value={accountTypeFilter}
               onChange={(e) => setAccountTypeFilter(e.target.value)}
-              className="text-sm border border-secondary-200 rounded-lg px-3 py-2 bg-white text-secondary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className="text-sm border border-secondary-200 dark:border-secondary-700 rounded-lg px-3 py-2 bg-white dark:bg-secondary-800 text-secondary-700 dark:text-secondary-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent cursor-pointer"
             >
               <option value="">All Accounts</option>
               {accountTypes.map((type) => (
@@ -84,7 +84,7 @@ export default function Holdings() {
       </div>
 
       {/* Holdings Card */}
-      <div className="bg-white rounded-xl shadow-soft border border-secondary-100 overflow-hidden">
+      <div className="bg-white dark:bg-secondary-900 rounded-xl shadow-soft dark:shadow-none border border-secondary-100 dark:border-secondary-800 overflow-hidden">
         {isLoading && (
           <SkeletonTable rows={5} />
         )}

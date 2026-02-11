@@ -1,5 +1,4 @@
 import { Link, useLocation } from 'react-router-dom';
-import { useState } from 'react';
 
 // Navigation icons
 const DashboardIcon = ({ className }) => (
@@ -32,103 +31,52 @@ const TransactionsIcon = ({ className }) => (
   </svg>
 );
 
-const NewsIcon = ({ className }) => (
+const InsightsIcon = ({ className }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M18 14h-8" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M15 18h-5" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M10 6h8v4h-8V6Z" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const MenuIcon = ({ className }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const CloseIcon = ({ className }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
 export default function Navigation() {
   const location = useLocation();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { path: '/', label: 'Dashboard', icon: DashboardIcon },
-    { path: '/holdings', label: 'Holdings', icon: HoldingsIcon },
-    { path: '/transactions', label: 'Transactions', icon: TransactionsIcon },
-    { path: '/news', label: 'News & Insights', icon: NewsIcon },
+    { path: '/', label: 'Dashboard', shortLabel: 'Home', icon: DashboardIcon },
+    { path: '/holdings', label: 'Holdings', shortLabel: 'Holdings', icon: HoldingsIcon },
+    { path: '/transactions', label: 'Transactions', shortLabel: 'Activity', icon: TransactionsIcon },
+    { path: '/news', label: 'Insights', shortLabel: 'Insights', icon: InsightsIcon },
   ];
 
-  const NavLink = ({ item, mobile = false }) => {
-    const Icon = item.icon;
-    const isActive = location.pathname === item.path;
-
-    return (
-      <Link
-        to={item.path}
-        onClick={() => mobile && setMobileMenuOpen(false)}
-        className={`
-          flex items-center gap-2 font-medium transition-all duration-200
-          ${mobile
-            ? `w-full px-4 py-3 rounded-lg ${isActive
-                ? 'bg-primary-50 text-primary-700'
-                : 'text-secondary-600 hover:bg-secondary-50 hover:text-secondary-900'
-              }`
-            : `py-4 px-3 border-b-2 text-sm ${isActive
-                ? 'border-primary-600 text-primary-700'
-                : 'border-transparent text-secondary-500 hover:text-secondary-700 hover:border-secondary-300'
-              }`
-          }
-        `}
-      >
-        <Icon className={`w-5 h-5 ${isActive ? 'text-primary-600' : ''}`} />
-        <span>{item.label}</span>
-      </Link>
-    );
-  };
-
   return (
-    <nav className="bg-white border-b border-secondary-200 sticky top-0 z-30">
+    <nav className="bg-white dark:bg-secondary-900 border-b border-secondary-200 dark:border-secondary-800 sticky top-0 z-30 transition-colors duration-200">
       <div className="container-app">
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-1">
-          {navItems.map((item) => (
-            <NavLink key={item.path} item={item} />
-          ))}
-        </div>
+        {/* Horizontal scrollable tabs - always visible */}
+        <div className="flex items-center overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = location.pathname === item.path;
 
-        {/* Mobile Navigation Header */}
-        <div className="md:hidden flex items-center justify-between py-3">
-          <span className="text-sm font-medium text-secondary-700">
-            {navItems.find(item => item.path === location.pathname)?.label || 'Menu'}
-          </span>
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 -mr-2 text-secondary-600 hover:text-secondary-900 hover:bg-secondary-100 rounded-lg transition-colors"
-          >
-            {mobileMenuOpen ? (
-              <CloseIcon className="w-5 h-5" />
-            ) : (
-              <MenuIcon className="w-5 h-5" />
-            )}
-          </button>
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`
+                  flex items-center gap-2 px-4 py-3 sm:py-4 font-medium text-sm whitespace-nowrap
+                  border-b-2 transition-all duration-200 flex-shrink-0
+                  ${isActive
+                    ? 'border-primary-600 text-primary-700 dark:border-primary-400 dark:text-primary-300'
+                    : 'border-transparent text-secondary-500 hover:text-secondary-700 hover:border-secondary-300 dark:text-secondary-400 dark:hover:text-secondary-200 dark:hover:border-secondary-600'
+                  }
+                `}
+              >
+                <Icon className={`w-5 h-5 ${isActive ? 'text-primary-600 dark:text-primary-400' : ''}`} />
+                {/* Show short label on mobile, full label on desktop */}
+                <span className="sm:hidden">{item.shortLabel}</span>
+                <span className="hidden sm:inline">{item.label}</span>
+              </Link>
+            );
+          })}
         </div>
-
-        {/* Mobile Menu Dropdown */}
-        {mobileMenuOpen && (
-          <div className="md:hidden pb-4 animate-slide-down">
-            <div className="flex flex-col gap-1">
-              {navItems.map((item) => (
-                <NavLink key={item.path} item={item} mobile />
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </nav>
   );

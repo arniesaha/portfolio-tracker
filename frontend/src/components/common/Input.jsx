@@ -19,7 +19,7 @@ const Input = forwardRef(function Input(
   return (
     <div className={`mb-4 ${containerClassName}`}>
       {label && (
-        <label className="block text-sm font-medium text-secondary-700 mb-1.5">
+        <label className="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1.5">
           {label}
           {required && <span className="text-danger-500 ml-0.5">*</span>}
         </label>
@@ -27,20 +27,20 @@ const Input = forwardRef(function Input(
       <div className="relative">
         {hasIcon && iconPosition === 'left' && (
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Icon className="w-5 h-5 text-secondary-400" />
+            <Icon className="w-5 h-5 text-secondary-400 dark:text-secondary-500" />
           </div>
         )}
         <input
           ref={ref}
           {...props}
           className={`
-            w-full px-4 py-2.5 bg-white border rounded-lg
-            text-secondary-900 placeholder-secondary-400
+            w-full px-4 py-2.5 bg-white dark:bg-secondary-800 border rounded-lg
+            text-secondary-900 dark:text-secondary-100 placeholder-secondary-400 dark:placeholder-secondary-500
             transition-all duration-200
-            focus:outline-none focus:ring-2 focus:ring-primary-500/20
+            focus:outline-none focus:ring-2 focus:ring-primary-500/20 dark:focus:ring-primary-400/30
             ${error
               ? 'border-danger-500 focus:border-danger-500'
-              : 'border-secondary-300 focus:border-primary-500'
+              : 'border-secondary-300 dark:border-secondary-600 focus:border-primary-500 dark:focus:border-primary-400'
             }
             ${hasIcon && iconPosition === 'left' ? 'pl-10' : ''}
             ${hasIcon && iconPosition === 'right' ? 'pr-10' : ''}
@@ -49,12 +49,12 @@ const Input = forwardRef(function Input(
         />
         {hasIcon && iconPosition === 'right' && (
           <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-            <Icon className="w-5 h-5 text-secondary-400" />
+            <Icon className="w-5 h-5 text-secondary-400 dark:text-secondary-500" />
           </div>
         )}
       </div>
       {error && (
-        <p className="mt-1.5 text-sm text-danger-600 flex items-center gap-1">
+        <p className="mt-1.5 text-sm text-danger-600 dark:text-danger-400 flex items-center gap-1">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
@@ -62,7 +62,7 @@ const Input = forwardRef(function Input(
         </p>
       )}
       {hint && !error && (
-        <p className="mt-1.5 text-sm text-secondary-500">{hint}</p>
+        <p className="mt-1.5 text-sm text-secondary-500 dark:text-secondary-400">{hint}</p>
       )}
     </div>
   );
@@ -88,7 +88,7 @@ export const Select = forwardRef(function Select(
   return (
     <div className={`mb-4 ${containerClassName}`}>
       {label && (
-        <label className="block text-sm font-medium text-secondary-700 mb-1.5">
+        <label className="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1.5">
           {label}
           {required && <span className="text-danger-500 ml-0.5">*</span>}
         </label>
@@ -98,13 +98,13 @@ export const Select = forwardRef(function Select(
           ref={ref}
           {...props}
           className={`
-            w-full px-4 py-2.5 bg-white border rounded-lg
-            text-secondary-900 appearance-none
+            w-full px-4 py-2.5 bg-white dark:bg-secondary-800 border rounded-lg
+            text-secondary-900 dark:text-secondary-100 appearance-none cursor-pointer
             transition-all duration-200
-            focus:outline-none focus:ring-2 focus:ring-primary-500/20
+            focus:outline-none focus:ring-2 focus:ring-primary-500/20 dark:focus:ring-primary-400/30
             ${error
               ? 'border-danger-500 focus:border-danger-500'
-              : 'border-secondary-300 focus:border-primary-500'
+              : 'border-secondary-300 dark:border-secondary-600 focus:border-primary-500 dark:focus:border-primary-400'
             }
             pr-10
             ${className}
@@ -122,13 +122,13 @@ export const Select = forwardRef(function Select(
           ))}
         </select>
         <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-          <svg className="w-5 h-5 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-secondary-400 dark:text-secondary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </div>
       </div>
       {error && (
-        <p className="mt-1.5 text-sm text-danger-600 flex items-center gap-1">
+        <p className="mt-1.5 text-sm text-danger-600 dark:text-danger-400 flex items-center gap-1">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
@@ -136,7 +136,7 @@ export const Select = forwardRef(function Select(
         </p>
       )}
       {hint && !error && (
-        <p className="mt-1.5 text-sm text-secondary-500">{hint}</p>
+        <p className="mt-1.5 text-sm text-secondary-500 dark:text-secondary-400">{hint}</p>
       )}
     </div>
   );
@@ -159,7 +159,7 @@ export const Textarea = forwardRef(function Textarea(
   return (
     <div className={`mb-4 ${containerClassName}`}>
       {label && (
-        <label className="block text-sm font-medium text-secondary-700 mb-1.5">
+        <label className="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1.5">
           {label}
           {required && <span className="text-danger-500 ml-0.5">*</span>}
         </label>
@@ -169,19 +169,19 @@ export const Textarea = forwardRef(function Textarea(
         rows={rows}
         {...props}
         className={`
-          w-full px-4 py-2.5 bg-white border rounded-lg
-          text-secondary-900 placeholder-secondary-400
+          w-full px-4 py-2.5 bg-white dark:bg-secondary-800 border rounded-lg
+          text-secondary-900 dark:text-secondary-100 placeholder-secondary-400 dark:placeholder-secondary-500
           transition-all duration-200 resize-y
-          focus:outline-none focus:ring-2 focus:ring-primary-500/20
+          focus:outline-none focus:ring-2 focus:ring-primary-500/20 dark:focus:ring-primary-400/30
           ${error
             ? 'border-danger-500 focus:border-danger-500'
-            : 'border-secondary-300 focus:border-primary-500'
+            : 'border-secondary-300 dark:border-secondary-600 focus:border-primary-500 dark:focus:border-primary-400'
           }
           ${className}
         `}
       />
       {error && (
-        <p className="mt-1.5 text-sm text-danger-600 flex items-center gap-1">
+        <p className="mt-1.5 text-sm text-danger-600 dark:text-danger-400 flex items-center gap-1">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
@@ -189,7 +189,7 @@ export const Textarea = forwardRef(function Textarea(
         </p>
       )}
       {hint && !error && (
-        <p className="mt-1.5 text-sm text-secondary-500">{hint}</p>
+        <p className="mt-1.5 text-sm text-secondary-500 dark:text-secondary-400">{hint}</p>
       )}
     </div>
   );

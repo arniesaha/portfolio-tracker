@@ -37,7 +37,6 @@ export default function Transactions() {
   const calculatedHolding = useMemo(() => {
     if (!transactions || selectedSymbol === 'ALL') return null;
 
-    // IMPORTANT: Sort transactions chronologically (oldest first) before calculating
     const symbolTransactions = transactions
       .filter(t => t.symbol === selectedSymbol)
       .sort((a, b) => new Date(a.transaction_date) - new Date(b.transaction_date));
@@ -76,7 +75,7 @@ export default function Transactions() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container-app py-8">
         <LoadingSpinner />
       </div>
     );
@@ -84,7 +83,7 @@ export default function Transactions() {
 
   if (isError) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container-app py-8">
         <ErrorMessage message="Failed to load transactions" />
       </div>
     );
@@ -100,34 +99,39 @@ export default function Transactions() {
   );
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container-app py-6 sm:py-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Transactions</h1>
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-secondary-100">Transactions</h1>
+          <p className="text-secondary-500 dark:text-secondary-400 mt-1">View and manage your transaction history</p>
+        </div>
 
         {/* Filter and Import */}
-        <div className="flex items-center gap-4">
-          <label htmlFor="symbol-filter" className="text-sm font-medium text-gray-700">
-            Filter by Symbol:
-          </label>
-          <select
-            id="symbol-filter"
-            value={selectedSymbol}
-            onChange={(e) => setSelectedSymbol(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white"
-          >
-            <option value="ALL">All Symbols ({transactions?.length || 0})</option>
-            {symbols.map(symbol => {
-              const count = transactions.filter(t => t.symbol === symbol).length;
-              return (
-                <option key={symbol} value={symbol}>
-                  {symbol} ({count})
-                </option>
-              );
-            })}
-          </select>
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-2">
+            <label htmlFor="symbol-filter" className="text-sm font-medium text-secondary-700 dark:text-secondary-300">
+              Filter:
+            </label>
+            <select
+              id="symbol-filter"
+              value={selectedSymbol}
+              onChange={(e) => setSelectedSymbol(e.target.value)}
+              className="px-3 py-2 border border-secondary-200 dark:border-secondary-700 rounded-lg shadow-sm focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-secondary-800 text-secondary-900 dark:text-secondary-100 cursor-pointer"
+            >
+              <option value="ALL">All Symbols ({transactions?.length || 0})</option>
+              {symbols.map(symbol => {
+                const count = transactions.filter(t => t.symbol === symbol).length;
+                return (
+                  <option key={symbol} value={symbol}>
+                    {symbol} ({count})
+                  </option>
+                );
+              })}
+            </select>
+          </div>
           <button
             onClick={() => setIsImportModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors cursor-pointer dark:bg-primary-500 dark:hover:bg-primary-600"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
@@ -145,66 +149,66 @@ export default function Transactions() {
 
       {/* Holdings Comparison Card */}
       {selectedSymbol !== 'ALL' && calculatedHolding && (
-        <Card>
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <Card className="mb-6">
+          <div className="p-6">
+            <h3 className="text-lg font-semibold text-secondary-900 dark:text-secondary-100 mb-4">
               {selectedSymbol} - Holdings Verification
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Calculated from Transactions */}
-              <div className="border-r border-gray-200 pr-6">
-                <h4 className="text-sm font-medium text-gray-500 uppercase mb-3">
+              <div className="md:border-r border-secondary-200 dark:border-secondary-700 md:pr-6">
+                <h4 className="text-sm font-medium text-secondary-500 dark:text-secondary-400 uppercase mb-3">
                   Calculated from Transactions
                 </h4>
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Total Shares:</span>
-                    <span className="font-semibold">{calculatedHolding.shares.toFixed(4)}</span>
+                    <span className="text-secondary-600 dark:text-secondary-400">Total Shares:</span>
+                    <span className="font-semibold text-secondary-900 dark:text-secondary-100">{calculatedHolding.shares.toFixed(4)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Avg Cost:</span>
-                    <span className="font-semibold">${calculatedHolding.avgCost.toFixed(4)}</span>
+                    <span className="text-secondary-600 dark:text-secondary-400">Avg Cost:</span>
+                    <span className="font-semibold text-secondary-900 dark:text-secondary-100">${calculatedHolding.avgCost.toFixed(4)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Total Cost:</span>
-                    <span className="font-semibold">${calculatedHolding.totalCost.toFixed(2)}</span>
+                    <span className="text-secondary-600 dark:text-secondary-400">Total Cost:</span>
+                    <span className="font-semibold text-secondary-900 dark:text-secondary-100">${calculatedHolding.totalCost.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
 
               {/* Current Holdings in Database */}
               <div>
-                <h4 className="text-sm font-medium text-gray-500 uppercase mb-3">
+                <h4 className="text-sm font-medium text-secondary-500 dark:text-secondary-400 uppercase mb-3">
                   Current Holdings (Database)
                 </h4>
                 {currentHolding ? (
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Total Shares:</span>
-                      <span className="font-semibold">{parseFloat(currentHolding.quantity).toFixed(4)}</span>
+                      <span className="text-secondary-600 dark:text-secondary-400">Total Shares:</span>
+                      <span className="font-semibold text-secondary-900 dark:text-secondary-100">{parseFloat(currentHolding.quantity).toFixed(4)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Avg Cost:</span>
-                      <span className="font-semibold">${parseFloat(currentHolding.avg_purchase_price).toFixed(4)}</span>
+                      <span className="text-secondary-600 dark:text-secondary-400">Avg Cost:</span>
+                      <span className="font-semibold text-secondary-900 dark:text-secondary-100">${parseFloat(currentHolding.avg_purchase_price).toFixed(4)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Total Cost:</span>
-                      <span className="font-semibold">
+                      <span className="text-secondary-600 dark:text-secondary-400">Total Cost:</span>
+                      <span className="font-semibold text-secondary-900 dark:text-secondary-100">
                         ${(parseFloat(currentHolding.quantity) * parseFloat(currentHolding.avg_purchase_price)).toFixed(2)}
                       </span>
                     </div>
 
                     {/* Match indicator */}
-                    <div className="mt-4 pt-4 border-t border-gray-200">
+                    <div className="mt-4 pt-4 border-t border-secondary-200 dark:border-secondary-700">
                       {Math.abs(calculatedHolding.shares - parseFloat(currentHolding.quantity)) < 0.01 ? (
-                        <div className="flex items-center text-green-600">
+                        <div className="flex items-center text-success-600 dark:text-success-400">
                           <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
                           </svg>
                           <span className="font-medium">Holdings Match!</span>
                         </div>
                       ) : (
-                        <div className="flex items-center text-yellow-600">
+                        <div className="flex items-center text-warning-600 dark:text-warning-400">
                           <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd"/>
                           </svg>
@@ -214,7 +218,7 @@ export default function Transactions() {
                     </div>
                   </div>
                 ) : (
-                  <div className="text-gray-500 italic">
+                  <div className="text-secondary-500 dark:text-secondary-400 italic">
                     No current holding found in database
                   </div>
                 )}
@@ -226,45 +230,45 @@ export default function Transactions() {
 
       <Card>
         {sortedTransactions.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-secondary-500 dark:text-secondary-400">
             No transactions found
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-secondary-200 dark:divide-secondary-700">
+              <thead className="bg-secondary-50 dark:bg-secondary-800">
                 <tr>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
                     Date
                   </th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
                     Symbol
                   </th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
                     Type
                   </th>
-                  <th scope="col" className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="px-4 py-3 text-right text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
                     Quantity
                   </th>
-                  <th scope="col" className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="px-4 py-3 text-right text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
                     Price
                   </th>
-                  <th scope="col" className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="px-4 py-3 text-right text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
                     Total Value
                   </th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
                     Notes
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white dark:bg-secondary-900 divide-y divide-secondary-100 dark:divide-secondary-800">
                 {sortedTransactions.map((transaction) => {
                   const totalValue = parseFloat(transaction.quantity) * parseFloat(transaction.price_per_share);
                   const isBuy = transaction.transaction_type === 'BUY';
 
                   return (
-                    <tr key={transaction.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                    <tr key={transaction.id} className="hover:bg-secondary-50 dark:hover:bg-secondary-800/50 transition-colors">
+                      <td className="px-4 py-3 whitespace-nowrap text-sm text-secondary-900 dark:text-secondary-100">
                         {new Date(transaction.transaction_date).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'short',
@@ -272,27 +276,27 @@ export default function Transactions() {
                         })}
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
-                        <div className="text-sm font-bold text-gray-900">{transaction.symbol}</div>
+                        <div className="text-sm font-bold text-secondary-900 dark:text-secondary-100">{transaction.symbol}</div>
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
                         <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
                           isBuy
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
+                            ? 'bg-success-100 text-success-700 dark:bg-success-900/50 dark:text-success-300'
+                            : 'bg-danger-100 text-danger-700 dark:bg-danger-900/50 dark:text-danger-300'
                         }`}>
                           {transaction.transaction_type}
                         </span>
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-900">
+                      <td className="px-4 py-3 whitespace-nowrap text-sm text-right text-secondary-900 dark:text-secondary-100 tabular-nums">
                         {parseFloat(transaction.quantity).toFixed(2)}
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-900">
+                      <td className="px-4 py-3 whitespace-nowrap text-sm text-right text-secondary-900 dark:text-secondary-100 tabular-nums">
                         ${parseFloat(transaction.price_per_share).toFixed(2)}
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-right text-gray-900">
+                      <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-right text-secondary-900 dark:text-secondary-100 tabular-nums">
                         ${totalValue.toFixed(2)}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-500 max-w-xs truncate">
+                      <td className="px-4 py-3 text-sm text-secondary-500 dark:text-secondary-400 max-w-xs truncate">
                         {transaction.notes || '-'}
                       </td>
                     </tr>
@@ -307,27 +311,33 @@ export default function Transactions() {
       {/* Summary Statistics */}
       <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
-          <div className="text-sm font-medium text-gray-500">
-            {selectedSymbol === 'ALL' ? 'Total Buys' : `${selectedSymbol} Buys`}
-          </div>
-          <div className="text-2xl font-bold text-green-600 mt-1">
-            {sortedTransactions.filter(t => t.transaction_type === 'BUY').length}
-          </div>
-        </Card>
-        <Card>
-          <div className="text-sm font-medium text-gray-500">
-            {selectedSymbol === 'ALL' ? 'Total Sells' : `${selectedSymbol} Sells`}
-          </div>
-          <div className="text-2xl font-bold text-red-600 mt-1">
-            {sortedTransactions.filter(t => t.transaction_type === 'SELL').length}
+          <div className="p-4">
+            <div className="text-sm font-medium text-secondary-500 dark:text-secondary-400">
+              {selectedSymbol === 'ALL' ? 'Total Buys' : `${selectedSymbol} Buys`}
+            </div>
+            <div className="text-2xl font-bold text-success-600 dark:text-success-400 mt-1 tabular-nums">
+              {sortedTransactions.filter(t => t.transaction_type === 'BUY').length}
+            </div>
           </div>
         </Card>
         <Card>
-          <div className="text-sm font-medium text-gray-500">
-            {selectedSymbol === 'ALL' ? 'Total Transactions' : `${selectedSymbol} Transactions`}
+          <div className="p-4">
+            <div className="text-sm font-medium text-secondary-500 dark:text-secondary-400">
+              {selectedSymbol === 'ALL' ? 'Total Sells' : `${selectedSymbol} Sells`}
+            </div>
+            <div className="text-2xl font-bold text-danger-600 dark:text-danger-400 mt-1 tabular-nums">
+              {sortedTransactions.filter(t => t.transaction_type === 'SELL').length}
+            </div>
           </div>
-          <div className="text-2xl font-bold text-gray-900 mt-1">
-            {sortedTransactions.length}
+        </Card>
+        <Card>
+          <div className="p-4">
+            <div className="text-sm font-medium text-secondary-500 dark:text-secondary-400">
+              {selectedSymbol === 'ALL' ? 'Total Transactions' : `${selectedSymbol} Transactions`}
+            </div>
+            <div className="text-2xl font-bold text-secondary-900 dark:text-secondary-100 mt-1 tabular-nums">
+              {sortedTransactions.length}
+            </div>
           </div>
         </Card>
       </div>

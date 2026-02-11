@@ -77,22 +77,22 @@ const getIcon = (iconName, className) => {
 
 const severityColors = {
   high: {
-    bg: 'bg-red-50',
-    border: 'border-red-200',
-    icon: 'text-red-500',
-    badge: 'bg-red-100 text-red-700'
+    bg: 'bg-red-50 dark:bg-red-900/20',
+    border: 'border-red-200 dark:border-red-800',
+    icon: 'text-red-500 dark:text-red-400',
+    badge: 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300'
   },
   medium: {
-    bg: 'bg-amber-50',
-    border: 'border-amber-200',
-    icon: 'text-amber-500',
-    badge: 'bg-amber-100 text-amber-700'
+    bg: 'bg-amber-50 dark:bg-amber-900/20',
+    border: 'border-amber-200 dark:border-amber-800',
+    icon: 'text-amber-500 dark:text-amber-400',
+    badge: 'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300'
   },
   low: {
-    bg: 'bg-blue-50',
-    border: 'border-blue-200',
-    icon: 'text-blue-500',
-    badge: 'bg-blue-100 text-blue-700'
+    bg: 'bg-blue-50 dark:bg-blue-900/20',
+    border: 'border-blue-200 dark:border-blue-800',
+    icon: 'text-blue-500 dark:text-blue-400',
+    badge: 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300'
   }
 };
 
@@ -124,15 +124,15 @@ function HealthScore({ score, grade }) {
     <div className="flex items-center gap-6">
       <div className="relative">
         <div className={`w-24 h-24 rounded-full bg-gradient-to-br ${getGradeBg()} flex items-center justify-center shadow-lg`}>
-          <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center">
+          <div className="w-20 h-20 rounded-full bg-white dark:bg-secondary-900 flex items-center justify-center">
             <span className={`text-3xl font-bold ${getGradeColor()}`}>{grade}</span>
           </div>
         </div>
       </div>
       <div>
-        <div className="text-sm text-secondary-500 mb-1">Portfolio Health</div>
-        <div className="text-2xl font-bold text-secondary-900">{score}/100</div>
-        <div className="text-sm text-secondary-500 mt-1">
+        <div className="text-sm text-secondary-500 dark:text-secondary-400 mb-1">Portfolio Health</div>
+        <div className="text-2xl font-bold text-secondary-900 dark:text-secondary-100">{score}/100</div>
+        <div className="text-sm text-secondary-500 dark:text-secondary-400 mt-1">
           {score >= 90 ? 'Excellent shape!' :
            score >= 80 ? 'Looking good' :
            score >= 70 ? 'Some attention needed' :
@@ -150,7 +150,7 @@ function RecommendationCard({ recommendation }) {
   return (
     <div className={`${colors.bg} ${colors.border} border rounded-xl p-4 hover:shadow-md transition-shadow`}>
       <div className="flex items-start gap-3">
-        <div className={`p-2 rounded-lg bg-white ${colors.icon}`}>
+        <div className={`p-2 rounded-lg bg-white dark:bg-secondary-800 ${colors.icon}`}>
           {getIcon(recommendation.icon, 'w-5 h-5')}
         </div>
         <div className="flex-1 min-w-0">
@@ -159,22 +159,22 @@ function RecommendationCard({ recommendation }) {
               {typeLabels[recommendation.type]}
             </span>
             {recommendation.symbol && (
-              <span className="text-sm font-semibold text-secondary-900">
+              <span className="text-sm font-semibold text-secondary-900 dark:text-secondary-100">
                 {recommendation.symbol}
               </span>
             )}
           </div>
-          <h4 className="font-medium text-secondary-900 mb-1">
+          <h4 className="font-medium text-secondary-900 dark:text-secondary-100 mb-1">
             {recommendation.title}
           </h4>
-          <p className="text-sm text-secondary-600">
+          <p className="text-sm text-secondary-600 dark:text-secondary-400">
             {recommendation.description}
           </p>
           {recommendation.metric !== undefined && (
             <div className="mt-2 text-sm">
-              <span className="text-secondary-500">{recommendation.metric_label}: </span>
+              <span className="text-secondary-500 dark:text-secondary-400">{recommendation.metric_label}: </span>
               <span className={`font-semibold ${
-                recommendation.metric >= 0 ? 'text-green-600' : 'text-red-600'
+                recommendation.metric >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
               }`}>
                 {recommendation.metric >= 0 ? '+' : ''}{recommendation.metric.toFixed(1)}%
               </span>
@@ -188,16 +188,16 @@ function RecommendationCard({ recommendation }) {
 
 function InsightCard({ insight }) {
   return (
-    <div className="bg-gradient-to-br from-primary-50 to-accent-50 border border-primary-100 rounded-xl p-4">
+    <div className="bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-900/20 dark:to-accent-900/20 border border-primary-100 dark:border-primary-800 rounded-xl p-4">
       <div className="flex items-start gap-3">
-        <div className="p-2 rounded-lg bg-white text-primary-500">
+        <div className="p-2 rounded-lg bg-white dark:bg-secondary-800 text-primary-500 dark:text-primary-400">
           <LightBulbIcon className="w-5 h-5" />
         </div>
         <div>
-          <h4 className="font-medium text-secondary-900 mb-1">{insight.title}</h4>
-          <p className="text-sm text-secondary-600">{insight.content}</p>
+          <h4 className="font-medium text-secondary-900 dark:text-secondary-100 mb-1">{insight.title}</h4>
+          <p className="text-sm text-secondary-600 dark:text-secondary-400">{insight.content}</p>
           {insight.generated_at && (
-            <p className="text-xs text-secondary-400 mt-2">
+            <p className="text-xs text-secondary-400 dark:text-secondary-500 mt-2">
               Generated {new Date(insight.generated_at).toLocaleDateString()}
             </p>
           )}
@@ -209,10 +209,10 @@ function InsightCard({ insight }) {
 
 function SummaryBadges({ summary }) {
   const badges = [
-    { key: 'take_profit', label: 'Take Profit', emoji: '🎯', color: 'bg-green-100 text-green-700' },
-    { key: 'review', label: 'Review', emoji: '🔍', color: 'bg-red-100 text-red-700' },
-    { key: 'rebalance', label: 'Rebalance', emoji: '⚖️', color: 'bg-amber-100 text-amber-700' },
-    { key: 'watch', label: 'Watch', emoji: '👀', color: 'bg-blue-100 text-blue-700' },
+    { key: 'take_profit', label: 'Take Profit', emoji: '🎯', color: 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300' },
+    { key: 'review', label: 'Review', emoji: '🔍', color: 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300' },
+    { key: 'rebalance', label: 'Rebalance', emoji: '⚖️', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300' },
+    { key: 'watch', label: 'Watch', emoji: '👀', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300' },
   ];
 
   return (
@@ -273,14 +273,14 @@ export default function News() {
     return (
       <div className="container-app py-6 sm:py-8">
         <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-secondary-900">News & Insights</h1>
-          <p className="text-secondary-500 mt-1">AI-powered analysis for your portfolio</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-secondary-100">News & Insights</h1>
+          <p className="text-secondary-500 dark:text-secondary-400 mt-1">AI-powered analysis for your portfolio</p>
         </div>
         <Card className="animate-pulse">
           <div className="p-8 space-y-4">
-            <div className="h-8 bg-secondary-200 rounded w-1/3"></div>
-            <div className="h-4 bg-secondary-200 rounded w-2/3"></div>
-            <div className="h-4 bg-secondary-200 rounded w-1/2"></div>
+            <div className="h-8 bg-secondary-200 dark:bg-secondary-700 rounded w-1/3"></div>
+            <div className="h-4 bg-secondary-200 dark:bg-secondary-700 rounded w-2/3"></div>
+            <div className="h-4 bg-secondary-200 dark:bg-secondary-700 rounded w-1/2"></div>
           </div>
         </Card>
       </div>
@@ -291,7 +291,7 @@ export default function News() {
     return (
       <div className="container-app py-6 sm:py-8">
         <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-secondary-900">News & Insights</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-secondary-100">News & Insights</h1>
         </div>
         <Card>
           <EmptyState
@@ -312,16 +312,17 @@ export default function News() {
       {/* Page Header */}
       <div className="flex items-center justify-between mb-6 sm:mb-8">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-secondary-900">News & Insights</h1>
-          <p className="text-secondary-500 mt-1">AI-powered analysis for your portfolio</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-secondary-100">News & Insights</h1>
+          <p className="text-secondary-500 dark:text-secondary-400 mt-1">AI-powered analysis for your portfolio</p>
         </div>
         <button
           onClick={handleRefresh}
           disabled={refreshing}
-          className="p-2 rounded-lg hover:bg-secondary-100 transition-colors disabled:opacity-50"
+          className="p-2 rounded-lg hover:bg-secondary-100 dark:hover:bg-secondary-800 transition-colors disabled:opacity-50 cursor-pointer"
           title="Refresh recommendations"
+          aria-label="Refresh recommendations"
         >
-          <RefreshIcon className={`w-5 h-5 text-secondary-600 ${refreshing ? 'animate-spin' : ''}`} />
+          <RefreshIcon className={`w-5 h-5 text-secondary-600 dark:text-secondary-400 ${refreshing ? 'animate-spin' : ''}`} />
         </button>
       </div>
 
@@ -343,8 +344,8 @@ export default function News() {
       {/* AI Insights */}
       {hasInsights && (
         <div className="mb-6">
-          <h2 className="text-lg font-semibold text-secondary-900 mb-3 flex items-center gap-2">
-            <SparklesIcon className="w-5 h-5 text-primary-500" />
+          <h2 className="text-lg font-semibold text-secondary-900 dark:text-secondary-100 mb-3 flex items-center gap-2">
+            <SparklesIcon className="w-5 h-5 text-primary-500 dark:text-primary-400" />
             AI Insights
           </h2>
           <div className="space-y-3">
@@ -357,7 +358,7 @@ export default function News() {
 
       {/* Recommendations */}
       <div>
-        <h2 className="text-lg font-semibold text-secondary-900 mb-3">
+        <h2 className="text-lg font-semibold text-secondary-900 dark:text-secondary-100 mb-3">
           Recommendations
         </h2>
         
@@ -370,13 +371,13 @@ export default function News() {
         ) : (
           <Card>
             <div className="p-8 text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
-                <CheckCircleIcon className="w-8 h-8 text-green-500" />
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full mb-4">
+                <CheckCircleIcon className="w-8 h-8 text-green-500 dark:text-green-400" />
               </div>
-              <h3 className="text-lg font-semibold text-secondary-900 mb-2">
+              <h3 className="text-lg font-semibold text-secondary-900 dark:text-secondary-100 mb-2">
                 All Good! 🎉
               </h3>
-              <p className="text-secondary-500 max-w-md mx-auto">
+              <p className="text-secondary-500 dark:text-secondary-400 max-w-md mx-auto">
                 Your portfolio looks well-balanced. No immediate actions recommended.
                 Keep monitoring and stay the course.
               </p>
@@ -387,7 +388,7 @@ export default function News() {
 
       {/* Last Updated */}
       {recommendations?.generated_at && (
-        <p className="text-xs text-secondary-400 mt-4 text-center">
+        <p className="text-xs text-secondary-400 dark:text-secondary-500 mt-4 text-center">
           Last updated: {new Date(recommendations.generated_at).toLocaleString()}
         </p>
       )}

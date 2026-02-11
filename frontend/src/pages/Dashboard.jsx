@@ -35,7 +35,7 @@ const RefreshIcon = ({ className }) => (
 // Subtle refresh indicator shown when updating prices in background
 function RefreshIndicator({ source }) {
   return (
-    <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-600 text-sm rounded-full">
+    <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 text-sm rounded-full">
       <RefreshIcon className="w-4 h-4 animate-spin" />
       <span>Updating prices...</span>
     </div>
@@ -50,15 +50,21 @@ function SourceBadge({ source, isRefreshing }) {
   
   if (source === 'cache') {
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-yellow-50 text-yellow-700 text-xs rounded">
-        📦 Cached prices
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 text-xs rounded">
+        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+        </svg>
+        Cached prices
       </span>
     );
   }
   
   return (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-50 text-green-700 text-xs rounded">
-      ✓ Live prices
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs rounded">
+      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+      </svg>
+      Live prices
     </span>
   );
 }
@@ -67,8 +73,8 @@ function InitializingState() {
   return (
     <div className="container-app py-8">
       <div className="mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-secondary-900">Dashboard</h1>
-        <p className="text-secondary-500 mt-1">Overview of your investment portfolio</p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-secondary-100">Dashboard</h1>
+        <p className="text-secondary-500 dark:text-secondary-400 mt-1">Overview of your investment portfolio</p>
       </div>
 
       {/* Show skeleton UI immediately instead of blocking spinner */}
@@ -81,14 +87,14 @@ function InitializingState() {
         </div>
         
         {/* Skeleton Chart */}
-        <div className="bg-white rounded-xl shadow-soft border border-secondary-100 p-6">
-          <div className="h-4 w-32 bg-secondary-200 rounded animate-pulse mb-4" />
-          <div className="h-64 bg-secondary-100 rounded animate-pulse" />
+        <div className="bg-white dark:bg-secondary-900 rounded-xl shadow-soft dark:shadow-none border border-secondary-100 dark:border-secondary-800 p-6">
+          <div className="h-4 w-32 bg-secondary-200 dark:bg-secondary-700 rounded animate-pulse mb-4" />
+          <div className="h-64 bg-secondary-100 dark:bg-secondary-800 rounded animate-pulse" />
         </div>
         
         {/* Loading message */}
         <div className="text-center py-4">
-          <div className="inline-flex items-center gap-2 text-secondary-500">
+          <div className="inline-flex items-center gap-2 text-secondary-500 dark:text-secondary-400">
             <RefreshIcon className="w-4 h-4 animate-spin" />
             <span>Loading portfolio data...</span>
           </div>
@@ -145,10 +151,10 @@ export default function Dashboard() {
     return (
       <div className="container-app py-8">
         <div className="mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-secondary-900">Dashboard</h1>
-          <p className="text-secondary-500 mt-1">Overview of your investment portfolio</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-secondary-100">Dashboard</h1>
+          <p className="text-secondary-500 dark:text-secondary-400 mt-1">Overview of your investment portfolio</p>
         </div>
-        <div className="bg-white rounded-xl shadow-soft border border-secondary-100 p-8">
+        <div className="bg-white dark:bg-secondary-900 rounded-xl shadow-soft dark:shadow-none border border-secondary-100 dark:border-secondary-800 p-8">
           <ErrorMessage
             message="Unable to load portfolio data. Please check if the backend server is running."
           />
@@ -169,8 +175,8 @@ export default function Dashboard() {
       {/* Page Header */}
       <div className="mb-6 sm:mb-8 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-secondary-900">Dashboard</h1>
-          <p className="text-secondary-500 mt-1">Overview of your investment portfolio</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-secondary-100">Dashboard</h1>
+          <p className="text-secondary-500 dark:text-secondary-400 mt-1">Overview of your investment portfolio</p>
         </div>
         
         <div className="flex items-center gap-3">
@@ -188,7 +194,7 @@ export default function Dashboard() {
       </div>
 
       {!hasHoldings ? (
-        <div className="bg-white rounded-xl shadow-soft border border-secondary-100">
+        <div className="bg-white dark:bg-secondary-900 rounded-xl shadow-soft dark:shadow-none border border-secondary-100 dark:border-secondary-800">
           <EmptyState
             icon={ChartIcon}
             title="Welcome to Portfolio Tracker"

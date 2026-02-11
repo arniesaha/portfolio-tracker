@@ -55,7 +55,7 @@ export default function CurrencyToggle({ value, onChange, rates }) {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 bg-white border border-secondary-200 rounded-lg text-sm font-medium text-secondary-700 hover:bg-secondary-50 transition-colors"
+        className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-secondary-800 border border-secondary-200 dark:border-secondary-700 rounded-lg text-sm font-medium text-secondary-700 dark:text-secondary-200 hover:bg-secondary-50 dark:hover:bg-secondary-700 transition-colors cursor-pointer"
         title={rates ? 'Live exchange rates' : 'Using fallback rates'}
       >
         <span>{selected.flag}</span>
@@ -74,7 +74,7 @@ export default function CurrencyToggle({ value, onChange, rates }) {
       </button>
       
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-secondary-200 py-1 z-50">
+        <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-secondary-800 rounded-lg shadow-lg dark:shadow-xl border border-secondary-200 dark:border-secondary-700 py-1 z-50">
           {CURRENCIES.map((currency) => {
             const rate = rates?.[currency.code] ?? FALLBACK_RATES[currency.code];
             return (
@@ -84,22 +84,22 @@ export default function CurrencyToggle({ value, onChange, rates }) {
                   onChange(currency.code);
                   setIsOpen(false);
                 }}
-                className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left hover:bg-secondary-50 transition-colors ${
-                  currency.code === value ? 'bg-primary-50 text-primary-700' : 'text-secondary-700'
+                className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left hover:bg-secondary-50 dark:hover:bg-secondary-700 transition-colors cursor-pointer ${
+                  currency.code === value ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : 'text-secondary-700 dark:text-secondary-200'
                 }`}
               >
                 <span className="text-lg">{currency.flag}</span>
                 <div className="flex-1">
                   <div className="font-medium">{currency.code}</div>
-                  <div className="text-xs text-secondary-500">{currency.name}</div>
+                  <div className="text-xs text-secondary-500 dark:text-secondary-400">{currency.name}</div>
                 </div>
                 {currency.code !== 'CAD' && (
-                  <span className="text-xs text-secondary-400">
+                  <span className="text-xs text-secondary-400 dark:text-secondary-500">
                     1 CAD = {rate?.toFixed(currency.code === 'INR' ? 2 : 4)}
                   </span>
                 )}
                 {currency.code === value && (
-                  <svg className="w-4 h-4 text-primary-600" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-4 h-4 text-primary-600 dark:text-primary-400" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                 )}
@@ -107,7 +107,7 @@ export default function CurrencyToggle({ value, onChange, rates }) {
             );
           })}
           {rates && (
-            <div className="px-4 py-2 text-xs text-secondary-400 border-t border-secondary-100">
+            <div className="px-4 py-2 text-xs text-secondary-400 dark:text-secondary-500 border-t border-secondary-100 dark:border-secondary-700">
               ✓ Live rates
             </div>
           )}

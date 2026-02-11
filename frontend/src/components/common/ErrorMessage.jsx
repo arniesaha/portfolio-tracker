@@ -19,25 +19,25 @@ export default function ErrorMessage({
 }) {
   const variants = {
     error: {
-      bg: 'bg-danger-50',
-      border: 'border-danger-200',
-      icon: 'text-danger-500',
-      title: 'text-danger-800',
-      message: 'text-danger-700',
+      bg: 'bg-danger-50 dark:bg-danger-900/20',
+      border: 'border-danger-200 dark:border-danger-800',
+      icon: 'text-danger-500 dark:text-danger-400',
+      title: 'text-danger-800 dark:text-danger-200',
+      message: 'text-danger-700 dark:text-danger-300',
     },
     warning: {
-      bg: 'bg-warning-50',
-      border: 'border-warning-200',
-      icon: 'text-warning-500',
-      title: 'text-warning-800',
-      message: 'text-warning-700',
+      bg: 'bg-warning-50 dark:bg-warning-900/20',
+      border: 'border-warning-200 dark:border-warning-800',
+      icon: 'text-warning-500 dark:text-warning-400',
+      title: 'text-warning-800 dark:text-warning-200',
+      message: 'text-warning-700 dark:text-warning-300',
     },
     info: {
-      bg: 'bg-accent-50',
-      border: 'border-accent-200',
-      icon: 'text-accent-500',
-      title: 'text-accent-800',
-      message: 'text-accent-700',
+      bg: 'bg-accent-50 dark:bg-accent-900/20',
+      border: 'border-accent-200 dark:border-accent-800',
+      icon: 'text-accent-500 dark:text-accent-400',
+      title: 'text-accent-800 dark:text-accent-200',
+      message: 'text-accent-700 dark:text-accent-300',
     },
   };
 
@@ -57,7 +57,7 @@ export default function ErrorMessage({
           {onRetry && (
             <button
               onClick={onRetry}
-              className={`mt-3 inline-flex items-center gap-1.5 text-sm font-medium ${style.title} hover:underline`}
+              className={`mt-3 inline-flex items-center gap-1.5 text-sm font-medium ${style.title} hover:underline cursor-pointer`}
             >
               <RefreshIcon />
               Try again
@@ -77,17 +77,17 @@ export function PageError({
 }) {
   return (
     <div className="min-h-[400px] flex flex-col items-center justify-center text-center px-4">
-      <div className="w-16 h-16 bg-danger-100 rounded-2xl flex items-center justify-center mb-4">
-        <svg className="w-8 h-8 text-danger-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="w-16 h-16 bg-danger-100 dark:bg-danger-900/30 rounded-2xl flex items-center justify-center mb-4">
+        <svg className="w-8 h-8 text-danger-600 dark:text-danger-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
         </svg>
       </div>
-      <h2 className="text-xl font-semibold text-secondary-900 mb-2">{title}</h2>
-      <p className="text-secondary-500 max-w-sm mb-6">{message}</p>
+      <h2 className="text-xl font-semibold text-secondary-900 dark:text-secondary-100 mb-2">{title}</h2>
+      <p className="text-secondary-500 dark:text-secondary-400 max-w-sm mb-6">{message}</p>
       {onRetry && (
         <button
           onClick={onRetry}
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors cursor-pointer dark:bg-primary-500 dark:hover:bg-primary-600"
         >
           <RefreshIcon />
           Try again

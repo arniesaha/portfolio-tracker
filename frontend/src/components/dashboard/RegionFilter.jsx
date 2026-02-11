@@ -8,16 +8,16 @@ const REGIONS = [
 
 export default function RegionFilter({ value, onChange }) {
   return (
-    <div className="inline-flex rounded-lg border border-secondary-200 bg-white p-1 shadow-sm">
+    <div className="inline-flex rounded-lg border border-secondary-200 dark:border-secondary-700 bg-white dark:bg-secondary-800 p-1 shadow-sm">
       {REGIONS.map((region) => (
         <button
           key={region.id}
           onClick={() => onChange(region.id)}
           className={`
-            px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200
+            px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200 cursor-pointer
             ${value === region.id
-              ? 'bg-primary-600 text-white shadow-sm'
-              : 'text-secondary-600 hover:bg-secondary-50'
+              ? 'bg-primary-600 dark:bg-primary-500 text-white shadow-sm'
+              : 'text-secondary-600 dark:text-secondary-300 hover:bg-secondary-50 dark:hover:bg-secondary-700'
             }
           `}
         >

@@ -1,6 +1,7 @@
 import { formatPercent } from '../../utils/formatters';
 import { SkeletonCard } from '../common/LoadingSpinner';
 import { formatCurrencyWithConversion } from './CurrencyToggle';
+import { usePrivacy } from '../../contexts/PrivacyContext';
 
 // Icons for each stat card
 const WalletIcon = ({ className }) => (
@@ -45,36 +46,54 @@ const ArrowDownIcon = () => (
   </svg>
 );
 
-function StatCard({ title, value, subtitle, trend, icon: Icon, iconBgColor, iconColor }) {
+function StatCard({ title, value, subtitle, trend, icon: Icon, iconBgColor, iconColor, isPrivate = false, onTogglePrivacy }) {
   const isPositive = trend === undefined || trend >= 0;
 
+  const maskedValue = '••••••';
+  const displayValue = isPrivate ? maskedValue : value;
+
+  // Add dark mode variants to icon colors
+  const darkIconBgColor = iconBgColor?.replace('bg-primary-100', 'bg-primary-100 dark:bg-primary-900/50')
+    .replace('bg-success-100', 'bg-success-100 dark:bg-success-900/50')
+    .replace('bg-danger-100', 'bg-danger-100 dark:bg-danger-900/50');
+  const darkIconColor = iconColor?.replace('text-primary-600', 'text-primary-600 dark:text-primary-400')
+    .replace('text-success-600', 'text-success-600 dark:text-success-400')
+    .replace('text-danger-600', 'text-danger-600 dark:text-danger-400');
+
   return (
-    <div className="bg-white rounded-xl shadow-soft border border-secondary-100 p-5 sm:p-6 transition-all duration-200 hover:shadow-soft-lg hover:border-secondary-200 relative">
+    <div className="bg-white dark:bg-secondary-900 rounded-xl shadow-soft dark:shadow-none border border-secondary-100 dark:border-secondary-800 p-5 sm:p-6 transition-all duration-200 hover:shadow-soft-lg dark:hover:bg-secondary-800/50 hover:border-secondary-200 dark:hover:border-secondary-700 relative">
       {Icon && (
-        <div className={`absolute top-4 right-4 ${iconBgColor} ${iconColor} p-2.5 rounded-xl`}>
+        <div className={`absolute top-4 right-4 ${darkIconBgColor} ${darkIconColor} p-2.5 rounded-xl`}>
           <Icon className="w-5 h-5" />
         </div>
       )}
       <div>
-        <p className="text-sm font-medium text-secondary-500 pr-12">{title}</p>
-        <p className="text-2xl sm:text-3xl font-bold text-secondary-900 mt-2 tabular-nums">
-          {value}
+        <p className="text-sm font-medium text-secondary-500 dark:text-secondary-400 pr-12">{title}</p>
+        <p 
+          className={`text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-secondary-100 mt-2 tabular-nums ${isPrivate ? 'cursor-pointer select-none hover:text-primary-600 dark:hover:text-primary-400 transition-colors' : ''}`}
+          onClick={isPrivate ? onTogglePrivacy : undefined}
+          title={isPrivate ? 'Click to reveal' : undefined}
+        >
+          {displayValue}
         </p>
-        {subtitle !== undefined && (
+        {subtitle !== undefined && !isPrivate && (
           <div className="flex items-center gap-1.5 mt-2">
             {trend !== undefined && (
-              <span className={`flex items-center ${isPositive ? 'text-success-600' : 'text-danger-600'}`}>
+              <span className={`flex items-center ${isPositive ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400'}`}>
                 {isPositive ? <ArrowUpIcon /> : <ArrowDownIcon />}
               </span>
             )}
             <p className={`text-sm font-medium ${
               trend !== undefined
-                ? isPositive ? 'text-success-600' : 'text-danger-600'
-                : 'text-secondary-500'
+                ? isPositive ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400'
+                : 'text-secondary-500 dark:text-secondary-400'
             }`}>
               {subtitle}
             </p>
           </div>
+        )}
+        {isPrivate && (
+          <p className="text-sm text-secondary-400 dark:text-secondary-500 mt-2">Click to reveal</p>
         )}
       </div>
     </div>
@@ -82,6 +101,8 @@ function StatCard({ title, value, subtitle, trend, icon: Icon, iconBgColor, icon
 }
 
 export default function SummaryCards({ summary, realizedGains, isLoading, displayCurrency = 'CAD', exchangeRates }) {
+  const { isHidden, togglePrivacy } = usePrivacy();
+  
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -142,7 +163,7 @@ export default function SummaryCards({ summary, realizedGains, isLoading, displa
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
       {cards.map((card, index) => (
-        <StatCard key={index} {...card} />
+        <StatCard key={index} {...card} isPrivate={isHidden} onTogglePrivacy={togglePrivacy} />
       ))}
     </div>
   );

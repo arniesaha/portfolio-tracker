@@ -8,8 +8,8 @@ export default function LoadingSpinner({ size = 'md', className = '' }) {
   return (
     <div className={`flex items-center justify-center p-8 ${className}`}>
       <div className="relative">
-        <div className={`${sizes[size]} rounded-full border-4 border-secondary-200`}></div>
-        <div className={`${sizes[size]} rounded-full border-4 border-primary-600 border-t-transparent animate-spin absolute top-0 left-0`}></div>
+        <div className={`${sizes[size]} rounded-full border-4 border-secondary-200 dark:border-secondary-700`}></div>
+        <div className={`${sizes[size]} rounded-full border-4 border-primary-600 dark:border-primary-400 border-t-transparent animate-spin absolute top-0 left-0`}></div>
       </div>
     </div>
   );
@@ -18,29 +18,29 @@ export default function LoadingSpinner({ size = 'md', className = '' }) {
 // Skeleton loaders for different content types
 export function SkeletonCard() {
   return (
-    <div className="bg-white rounded-xl shadow-soft border border-secondary-100 p-6 animate-pulse">
-      <div className="h-4 bg-secondary-200 rounded w-1/3 mb-4"></div>
-      <div className="h-8 bg-secondary-200 rounded w-2/3 mb-2"></div>
-      <div className="h-4 bg-secondary-200 rounded w-1/4"></div>
+    <div className="bg-white dark:bg-secondary-900 rounded-xl shadow-soft dark:shadow-none border border-secondary-100 dark:border-secondary-800 p-6 animate-pulse">
+      <div className="h-4 bg-secondary-200 dark:bg-secondary-700 rounded w-1/3 mb-4"></div>
+      <div className="h-8 bg-secondary-200 dark:bg-secondary-700 rounded w-2/3 mb-2"></div>
+      <div className="h-4 bg-secondary-200 dark:bg-secondary-700 rounded w-1/4"></div>
     </div>
   );
 }
 
 export function SkeletonTable({ rows = 5 }) {
   return (
-    <div className="bg-white rounded-xl shadow-soft border border-secondary-100 overflow-hidden animate-pulse">
-      <div className="bg-secondary-50 px-6 py-4 border-b border-secondary-100">
+    <div className="bg-white dark:bg-secondary-900 rounded-xl shadow-soft dark:shadow-none border border-secondary-100 dark:border-secondary-800 overflow-hidden animate-pulse">
+      <div className="bg-secondary-50 dark:bg-secondary-800 px-6 py-4 border-b border-secondary-100 dark:border-secondary-700">
         <div className="flex gap-8">
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="h-4 bg-secondary-200 rounded w-20"></div>
+            <div key={i} className="h-4 bg-secondary-200 dark:bg-secondary-700 rounded w-20"></div>
           ))}
         </div>
       </div>
-      <div className="divide-y divide-secondary-100">
+      <div className="divide-y divide-secondary-100 dark:divide-secondary-800">
         {Array.from({ length: rows }).map((_, i) => (
           <div key={i} className="px-6 py-4 flex gap-8">
             {[1, 2, 3, 4, 5].map((j) => (
-              <div key={j} className="h-4 bg-secondary-200 rounded w-20"></div>
+              <div key={j} className="h-4 bg-secondary-200 dark:bg-secondary-700 rounded w-20"></div>
             ))}
           </div>
         ))}
@@ -51,13 +51,13 @@ export function SkeletonTable({ rows = 5 }) {
 
 export function SkeletonChart() {
   return (
-    <div className="bg-white rounded-xl shadow-soft border border-secondary-100 p-6 animate-pulse">
-      <div className="h-6 bg-secondary-200 rounded w-1/4 mb-6"></div>
-      <div className="h-64 bg-secondary-100 rounded-lg flex items-end justify-around px-4 pb-4 gap-2">
+    <div className="bg-white dark:bg-secondary-900 rounded-xl shadow-soft dark:shadow-none border border-secondary-100 dark:border-secondary-800 p-6 animate-pulse">
+      <div className="h-6 bg-secondary-200 dark:bg-secondary-700 rounded w-1/4 mb-6"></div>
+      <div className="h-64 bg-secondary-100 dark:bg-secondary-800 rounded-lg flex items-end justify-around px-4 pb-4 gap-2">
         {[40, 65, 45, 80, 55, 70, 50].map((height, i) => (
           <div
             key={i}
-            className="bg-secondary-200 rounded-t w-8"
+            className="bg-secondary-200 dark:bg-secondary-700 rounded-t w-8"
             style={{ height: `${height}%` }}
           ></div>
         ))}
@@ -71,7 +71,7 @@ export function PageLoader() {
   return (
     <div className="min-h-[400px] flex flex-col items-center justify-center">
       <LoadingSpinner size="lg" />
-      <p className="mt-4 text-secondary-500 font-medium">Loading...</p>
+      <p className="mt-4 text-secondary-500 dark:text-secondary-400 font-medium">Loading...</p>
     </div>
   );
 }
@@ -79,7 +79,7 @@ export function PageLoader() {
 // Inline loading state
 export function InlineLoader({ text = 'Loading...' }) {
   return (
-    <div className="flex items-center gap-2 text-secondary-500">
+    <div className="flex items-center gap-2 text-secondary-500 dark:text-secondary-400">
       <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
         <path

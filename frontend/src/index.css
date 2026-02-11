@@ -10,13 +10,23 @@
     scroll-behavior: smooth;
   }
 
+  /* Respect reduced motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
   body {
     @apply bg-secondary-50 text-secondary-900 font-sans;
+    @apply dark:bg-secondary-950 dark:text-secondary-100;
   }
 
   /* Better focus styles */
   *:focus-visible {
-    @apply outline-none ring-2 ring-primary-500 ring-offset-2;
+    @apply outline-none ring-2 ring-primary-500 ring-offset-2 dark:ring-offset-secondary-900;
   }
 
   /* Custom scrollbar */
@@ -25,16 +35,16 @@
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-secondary-100 rounded-full;
+    @apply bg-secondary-100 rounded-full dark:bg-secondary-800;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-secondary-300 rounded-full hover:bg-secondary-400;
+    @apply bg-secondary-300 rounded-full hover:bg-secondary-400 dark:bg-secondary-600 dark:hover:bg-secondary-500;
   }
 
   /* Selection */
   ::selection {
-    @apply bg-primary-200 text-primary-900;
+    @apply bg-primary-200 text-primary-900 dark:bg-primary-800 dark:text-primary-100;
   }
 }
 
@@ -47,10 +57,12 @@
   /* Card variants */
   .card {
     @apply bg-white rounded-xl shadow-soft border border-secondary-100;
+    @apply dark:bg-secondary-900 dark:border-secondary-800 dark:shadow-none;
   }
 
   .card-interactive {
     @apply card transition-all duration-200 hover:shadow-soft-lg hover:border-secondary-200;
+    @apply dark:hover:border-secondary-700 dark:hover:bg-secondary-800/50;
   }
 
   /* Badge variants */
@@ -59,74 +71,77 @@
   }
 
   .badge-primary {
-    @apply badge bg-primary-100 text-primary-700;
+    @apply badge bg-primary-100 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300;
   }
 
   .badge-success {
-    @apply badge bg-success-100 text-success-700;
+    @apply badge bg-success-100 text-success-700 dark:bg-success-900/50 dark:text-success-300;
   }
 
   .badge-warning {
-    @apply badge bg-warning-100 text-warning-700;
+    @apply badge bg-warning-100 text-warning-700 dark:bg-warning-900/50 dark:text-warning-300;
   }
 
   .badge-danger {
-    @apply badge bg-danger-100 text-danger-700;
+    @apply badge bg-danger-100 text-danger-700 dark:bg-danger-900/50 dark:text-danger-300;
   }
 
   .badge-secondary {
-    @apply badge bg-secondary-100 text-secondary-700;
+    @apply badge bg-secondary-100 text-secondary-700 dark:bg-secondary-800 dark:text-secondary-300;
   }
 
   /* Country badges */
   .badge-canada {
-    @apply badge bg-red-100 text-red-700;
+    @apply badge bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300;
   }
 
   .badge-india {
-    @apply badge bg-orange-100 text-orange-700;
+    @apply badge bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300;
   }
 
   .badge-usa {
-    @apply badge bg-blue-100 text-blue-700;
+    @apply badge bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300;
   }
 
   /* Table styles */
   .table-container {
     @apply overflow-x-auto rounded-xl border border-secondary-200 bg-white;
+    @apply dark:border-secondary-700 dark:bg-secondary-900;
   }
 
   .table {
-    @apply min-w-full divide-y divide-secondary-200;
+    @apply min-w-full divide-y divide-secondary-200 dark:divide-secondary-700;
   }
 
   .table-header {
-    @apply bg-secondary-50;
+    @apply bg-secondary-50 dark:bg-secondary-800;
   }
 
   .table-header-cell {
     @apply px-6 py-4 text-left text-xs font-semibold text-secondary-600 uppercase tracking-wider;
+    @apply dark:text-secondary-400;
   }
 
   .table-body {
     @apply bg-white divide-y divide-secondary-100;
+    @apply dark:bg-secondary-900 dark:divide-secondary-800;
   }
 
   .table-row {
-    @apply hover:bg-secondary-50 transition-colors;
+    @apply hover:bg-secondary-50 transition-colors dark:hover:bg-secondary-800/50;
   }
 
   .table-row-zebra:nth-child(even) {
-    @apply bg-secondary-50/50;
+    @apply bg-secondary-50/50 dark:bg-secondary-800/30;
   }
 
   .table-cell {
-    @apply px-6 py-4 whitespace-nowrap text-sm text-secondary-900;
+    @apply px-6 py-4 whitespace-nowrap text-sm text-secondary-900 dark:text-secondary-100;
   }
 
   /* Form styles */
   .form-label {
-    @apply block text-sm font-medium text-secondary-700 mb-1.5;
+    @apply block text-sm font-medium text-secondary-700 mb-1.5 dark:text-secondary-300;
   }
 
   .form-input {
@@ -134,6 +149,8 @@
            text-secondary-900 placeholder-secondary-400
            focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none
            transition-all duration-200;
+    @apply dark:bg-secondary-800 dark:border-secondary-600 dark:text-secondary-100
+           dark:placeholder-secondary-500 dark:focus:border-primary-400;
   }
 
   .form-input-error {
@@ -147,7 +164,7 @@
   }
 
   .form-error {
-    @apply mt-1.5 text-sm text-danger-600 flex items-center gap-1;
+    @apply mt-1.5 text-sm text-danger-600 flex items-center gap-1 dark:text-danger-400;
   }
 
   /* Button base */
@@ -155,7 +172,8 @@
     @apply inline-flex items-center justify-center gap-2 px-4 py-2.5
            font-medium rounded-lg transition-all duration-200
            focus:outline-none focus:ring-2 focus:ring-offset-2
-           disabled:opacity-50 disabled:cursor-not-allowed;
+           disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer;
+    @apply dark:focus:ring-offset-secondary-900;
   }
 
   .btn-sm {
@@ -169,11 +187,13 @@
   .btn-primary {
     @apply btn bg-primary-600 text-white hover:bg-primary-700
            focus:ring-primary-500 active:bg-primary-800;
+    @apply dark:bg-primary-500 dark:hover:bg-primary-600;
   }
 
   .btn-secondary {
     @apply btn bg-secondary-100 text-secondary-700 hover:bg-secondary-200
            focus:ring-secondary-500 active:bg-secondary-300;
+    @apply dark:bg-secondary-800 dark:text-secondary-200 dark:hover:bg-secondary-700;
   }
 
   .btn-danger {
@@ -189,21 +209,24 @@
   .btn-outline {
     @apply btn bg-transparent border-2 border-primary-600 text-primary-600
            hover:bg-primary-50 focus:ring-primary-500;
+    @apply dark:border-primary-400 dark:text-primary-400 dark:hover:bg-primary-900/30;
   }
 
   .btn-ghost {
     @apply btn bg-transparent text-secondary-600 hover:bg-secondary-100
            focus:ring-secondary-500;
+    @apply dark:text-secondary-400 dark:hover:bg-secondary-800;
   }
 
   .btn-icon {
     @apply p-2 rounded-lg text-secondary-500 hover:text-secondary-700
-           hover:bg-secondary-100 transition-colors;
+           hover:bg-secondary-100 transition-colors cursor-pointer;
+    @apply dark:text-secondary-400 dark:hover:text-secondary-200 dark:hover:bg-secondary-800;
   }
 
   /* Skeleton loading */
   .skeleton {
-    @apply bg-secondary-200 rounded animate-pulse;
+    @apply bg-secondary-200 rounded animate-pulse dark:bg-secondary-700;
   }
 
   .skeleton-text {
@@ -254,11 +277,11 @@
   }
 
   .stat-card-value {
-    @apply text-2xl sm:text-3xl font-bold text-secondary-900 tabular-nums;
+    @apply text-2xl sm:text-3xl font-bold text-secondary-900 tabular-nums dark:text-secondary-100;
   }
 
   .stat-card-label {
-    @apply text-sm font-medium text-secondary-500;
+    @apply text-sm font-medium text-secondary-500 dark:text-secondary-400;
   }
 
   .stat-card-trend {
@@ -266,11 +289,11 @@
   }
 
   .stat-card-trend-up {
-    @apply stat-card-trend text-success-600;
+    @apply stat-card-trend text-success-600 dark:text-success-400;
   }
 
   .stat-card-trend-down {
-    @apply stat-card-trend text-danger-600;
+    @apply stat-card-trend text-danger-600 dark:text-danger-400;
   }
 
   /* Empty state */
@@ -279,15 +302,15 @@
   }
 
   .empty-state-icon {
-    @apply w-16 h-16 text-secondary-300 mb-4;
+    @apply w-16 h-16 text-secondary-300 mb-4 dark:text-secondary-600;
   }
 
   .empty-state-title {
-    @apply text-lg font-semibold text-secondary-900 mb-2;
+    @apply text-lg font-semibold text-secondary-900 mb-2 dark:text-secondary-100;
   }
 
   .empty-state-description {
-    @apply text-secondary-500 max-w-sm mb-6;
+    @apply text-secondary-500 max-w-sm mb-6 dark:text-secondary-400;
   }
 
   /* Section header */
@@ -296,32 +319,34 @@
   }
 
   .section-title {
-    @apply text-lg font-semibold text-secondary-900;
+    @apply text-lg font-semibold text-secondary-900 dark:text-secondary-100;
   }
 
   .section-subtitle {
-    @apply text-sm text-secondary-500;
+    @apply text-sm text-secondary-500 dark:text-secondary-400;
   }
 
   /* Divider */
   .divider {
-    @apply border-t border-secondary-200 my-6;
+    @apply border-t border-secondary-200 my-6 dark:border-secondary-700;
   }
 
   /* Dropdown menu */
   .dropdown-menu {
     @apply absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg
            border border-secondary-200 py-1 z-50 animate-fade-in;
+    @apply dark:bg-secondary-800 dark:border-secondary-700;
   }
 
   .dropdown-item {
     @apply block px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-50
            hover:text-secondary-900 transition-colors cursor-pointer;
+    @apply dark:text-secondary-300 dark:hover:bg-secondary-700 dark:hover:text-secondary-100;
   }
 
   /* Progress bar */
   .progress-bar {
-    @apply h-2 bg-secondary-200 rounded-full overflow-hidden;
+    @apply h-2 bg-secondary-200 rounded-full overflow-hidden dark:bg-secondary-700;
   }
 
   .progress-bar-fill {

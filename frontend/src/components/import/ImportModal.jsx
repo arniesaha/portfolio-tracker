@@ -216,7 +216,7 @@ export default function ImportModal({ isOpen, onClose }) {
     <div className="space-y-6">
       {/* Platform Selection */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-2">
           Import Source
         </label>
         <div className="grid grid-cols-1 gap-3">
@@ -226,8 +226,8 @@ export default function ImportModal({ isOpen, onClose }) {
               className={`
                 flex items-center p-4 border rounded-lg cursor-pointer transition-colors
                 ${selectedPlatform === platform.value
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                  ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/30'
+                  : 'border-secondary-200 dark:border-secondary-700 hover:border-secondary-300 dark:hover:border-secondary-600'
                 }
               `}
             >
@@ -240,8 +240,8 @@ export default function ImportModal({ isOpen, onClose }) {
                 className="sr-only"
               />
               <div className="flex-1">
-                <div className="font-medium text-gray-900">{platform.label}</div>
-                <div className="text-sm text-gray-500">{platform.description}</div>
+                <div className="font-medium text-secondary-900 dark:text-secondary-100">{platform.label}</div>
+                <div className="text-sm text-secondary-500 dark:text-secondary-400">{platform.description}</div>
               </div>
               {selectedPlatform === platform.value && <CheckIcon />}
             </label>
@@ -251,13 +251,13 @@ export default function ImportModal({ isOpen, onClose }) {
 
       {/* Account Type */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-2">
           Account Type
         </label>
         <select
           value={accountType}
           onChange={(e) => setAccountType(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="w-full px-4 py-2 border border-secondary-300 dark:border-secondary-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-secondary-800 text-secondary-900 dark:text-secondary-100 cursor-pointer"
         >
           {accountTypes.map((type) => (
             <option key={type.value} value={type.value}>
@@ -269,7 +269,7 @@ export default function ImportModal({ isOpen, onClose }) {
 
       {/* File Upload */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-2">
           CSV File(s)
         </label>
         <div
@@ -277,7 +277,7 @@ export default function ImportModal({ isOpen, onClose }) {
           onDragOver={handleDragOver}
           className={`
             relative border-2 border-dashed rounded-lg p-8 text-center transition-colors
-            ${selectedFiles.length > 0 ? 'border-green-300 bg-green-50' : 'border-gray-300 hover:border-gray-400'}
+            ${selectedFiles.length > 0 ? 'border-green-300 bg-green-50 dark:border-green-700 dark:bg-green-900/30' : 'border-secondary-300 dark:border-secondary-600 hover:border-secondary-400 dark:hover:border-secondary-500'}
           `}
         >
           <input
@@ -288,15 +288,15 @@ export default function ImportModal({ isOpen, onClose }) {
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
           />
           <div className="space-y-2">
-            <div className="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+            <div className="mx-auto w-12 h-12 bg-secondary-100 dark:bg-secondary-800 rounded-full flex items-center justify-center">
               <UploadIcon />
             </div>
             {selectedFiles.length > 0 ? (
               <div>
-                <p className="text-sm font-medium text-green-600">
+                <p className="text-sm font-medium text-green-600 dark:text-green-400">
                   {selectedFiles.length} file(s) selected
                 </p>
-                <ul className="text-sm text-gray-500 mt-2">
+                <ul className="text-sm text-secondary-500 dark:text-secondary-400 mt-2">
                   {selectedFiles.map((file, i) => (
                     <li key={i}>{file.name}</li>
                   ))}
@@ -304,10 +304,10 @@ export default function ImportModal({ isOpen, onClose }) {
               </div>
             ) : (
               <div>
-                <p className="text-sm font-medium text-gray-700">
+                <p className="text-sm font-medium text-secondary-700 dark:text-secondary-300">
                   Drop CSV files here or click to browse
                 </p>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-secondary-500 dark:text-secondary-400 mt-1">
                   Only CSV files are supported
                 </p>
               </div>
@@ -317,20 +317,20 @@ export default function ImportModal({ isOpen, onClose }) {
       </div>
 
       {/* Skip Duplicates Option */}
-      <label className="flex items-center gap-3">
+      <label className="flex items-center gap-3 cursor-pointer">
         <input
           type="checkbox"
           checked={skipDuplicates}
           onChange={(e) => setSkipDuplicates(e.target.checked)}
-          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+          className="w-4 h-4 text-primary-600 border-secondary-300 dark:border-secondary-600 rounded focus:ring-primary-500"
         />
-        <span className="text-sm text-gray-700">
+        <span className="text-sm text-secondary-700 dark:text-secondary-300">
           Skip duplicate transactions (recommended)
         </span>
       </label>
 
       {error && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+        <div className="p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400">
           {error}
         </div>
       )}
@@ -341,21 +341,21 @@ export default function ImportModal({ isOpen, onClose }) {
     <div className="space-y-6">
       {/* Summary Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-gray-50 rounded-lg p-4">
-          <div className="text-2xl font-bold text-gray-900">{previewData?.total_transactions || 0}</div>
-          <div className="text-sm text-gray-500">Total Transactions</div>
+        <div className="bg-secondary-50 dark:bg-secondary-800 rounded-lg p-4">
+          <div className="text-2xl font-bold text-secondary-900 dark:text-secondary-100">{previewData?.total_transactions || 0}</div>
+          <div className="text-sm text-secondary-500 dark:text-secondary-400">Total Transactions</div>
         </div>
-        <div className="bg-green-50 rounded-lg p-4">
-          <div className="text-2xl font-bold text-green-600">{previewData?.buy_transactions || 0}</div>
-          <div className="text-sm text-gray-500">Buys</div>
+        <div className="bg-green-50 dark:bg-green-900/30 rounded-lg p-4">
+          <div className="text-2xl font-bold text-green-600 dark:text-green-400">{previewData?.buy_transactions || 0}</div>
+          <div className="text-sm text-secondary-500 dark:text-secondary-400">Buys</div>
         </div>
-        <div className="bg-red-50 rounded-lg p-4">
-          <div className="text-2xl font-bold text-red-600">{previewData?.sell_transactions || 0}</div>
-          <div className="text-sm text-gray-500">Sells</div>
+        <div className="bg-red-50 dark:bg-red-900/30 rounded-lg p-4">
+          <div className="text-2xl font-bold text-red-600 dark:text-red-400">{previewData?.sell_transactions || 0}</div>
+          <div className="text-sm text-secondary-500 dark:text-secondary-400">Sells</div>
         </div>
-        <div className="bg-yellow-50 rounded-lg p-4">
-          <div className="text-2xl font-bold text-yellow-600">{previewData?.potential_duplicates || 0}</div>
-          <div className="text-sm text-gray-500">Duplicates</div>
+        <div className="bg-yellow-50 dark:bg-yellow-900/30 rounded-lg p-4">
+          <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{previewData?.potential_duplicates || 0}</div>
+          <div className="text-sm text-secondary-500 dark:text-secondary-400">Duplicates</div>
         </div>
       </div>
 
@@ -404,36 +404,36 @@ export default function ImportModal({ isOpen, onClose }) {
 
       {/* Transaction Preview Table */}
       <div>
-        <h4 className="font-medium text-gray-900 mb-2">Transaction Preview</h4>
-        <div className="border rounded-lg overflow-hidden max-h-64 overflow-y-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50 sticky top-0">
+        <h4 className="font-medium text-secondary-900 dark:text-secondary-100 mb-2">Transaction Preview</h4>
+        <div className="border border-secondary-200 dark:border-secondary-700 rounded-lg overflow-hidden max-h-64 overflow-y-auto">
+          <table className="min-w-full divide-y divide-secondary-200 dark:divide-secondary-700">
+            <thead className="bg-secondary-50 dark:bg-secondary-800 sticky top-0">
               <tr>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Symbol</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Qty</th>
-                <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Price</th>
-                <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Total</th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-secondary-500 dark:text-secondary-400 uppercase">Date</th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-secondary-500 dark:text-secondary-400 uppercase">Symbol</th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-secondary-500 dark:text-secondary-400 uppercase">Type</th>
+                <th className="px-4 py-2 text-right text-xs font-medium text-secondary-500 dark:text-secondary-400 uppercase">Qty</th>
+                <th className="px-4 py-2 text-right text-xs font-medium text-secondary-500 dark:text-secondary-400 uppercase">Price</th>
+                <th className="px-4 py-2 text-right text-xs font-medium text-secondary-500 dark:text-secondary-400 uppercase">Total</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white dark:bg-secondary-900 divide-y divide-secondary-200 dark:divide-secondary-700">
               {previewData?.transactions?.slice(0, 50).map((t, i) => (
-                <tr key={i} className="hover:bg-gray-50">
-                  <td className="px-4 py-2 text-sm text-gray-900">{t.date}</td>
-                  <td className="px-4 py-2 text-sm font-medium text-gray-900">{t.symbol}</td>
+                <tr key={i} className="hover:bg-secondary-50 dark:hover:bg-secondary-800/50">
+                  <td className="px-4 py-2 text-sm text-secondary-900 dark:text-secondary-100">{t.date}</td>
+                  <td className="px-4 py-2 text-sm font-medium text-secondary-900 dark:text-secondary-100">{t.symbol}</td>
                   <td className="px-4 py-2">
                     <span className={`px-2 py-0.5 text-xs rounded-full ${
                       t.transaction_type === 'BUY'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
+                        ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300'
+                        : 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300'
                     }`}>
                       {t.transaction_type}
                     </span>
                   </td>
-                  <td className="px-4 py-2 text-sm text-right text-gray-900">{parseFloat(t.quantity).toFixed(2)}</td>
-                  <td className="px-4 py-2 text-sm text-right text-gray-900">${parseFloat(t.price_per_share).toFixed(2)}</td>
-                  <td className="px-4 py-2 text-sm text-right font-medium text-gray-900">
+                  <td className="px-4 py-2 text-sm text-right text-secondary-900 dark:text-secondary-100">{parseFloat(t.quantity).toFixed(2)}</td>
+                  <td className="px-4 py-2 text-sm text-right text-secondary-900 dark:text-secondary-100">${parseFloat(t.price_per_share).toFixed(2)}</td>
+                  <td className="px-4 py-2 text-sm text-right font-medium text-secondary-900 dark:text-secondary-100">
                     ${(parseFloat(t.quantity) * parseFloat(t.price_per_share)).toFixed(2)}
                   </td>
                 </tr>
@@ -441,7 +441,7 @@ export default function ImportModal({ isOpen, onClose }) {
             </tbody>
           </table>
           {previewData?.transactions?.length > 50 && (
-            <div className="px-4 py-2 bg-gray-50 text-sm text-gray-500 text-center">
+            <div className="px-4 py-2 bg-secondary-50 dark:bg-secondary-800 text-sm text-secondary-500 dark:text-secondary-400 text-center">
               Showing 50 of {previewData.transactions.length} transactions
             </div>
           )}
@@ -449,7 +449,7 @@ export default function ImportModal({ isOpen, onClose }) {
       </div>
 
       {error && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+        <div className="p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400">
           {error}
         </div>
       )}
@@ -459,24 +459,24 @@ export default function ImportModal({ isOpen, onClose }) {
   const renderResultStep = () => (
     <div className="space-y-6 text-center">
       <div className={`mx-auto w-16 h-16 rounded-full flex items-center justify-center ${
-        importResult?.success ? 'bg-green-100' : 'bg-red-100'
+        importResult?.success ? 'bg-green-100 dark:bg-green-900/50' : 'bg-red-100 dark:bg-red-900/50'
       }`}>
         {importResult?.success ? (
-          <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-8 h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         ) : (
-          <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-8 h-8 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         )}
       </div>
 
       <div>
-        <h3 className="text-xl font-semibold text-gray-900">
+        <h3 className="text-xl font-semibold text-secondary-900 dark:text-secondary-100">
           {importResult?.success ? 'Import Successful!' : 'Import Failed'}
         </h3>
-        <p className="text-gray-500 mt-1">
+        <p className="text-secondary-500 dark:text-secondary-400 mt-1">
           {importResult?.success
             ? 'Your transactions have been imported successfully.'
             : 'There was an error importing your transactions.'}
@@ -485,21 +485,21 @@ export default function ImportModal({ isOpen, onClose }) {
 
       {importResult?.success && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="bg-green-50 rounded-lg p-4">
-            <div className="text-2xl font-bold text-green-600">{importResult.transactions_imported}</div>
-            <div className="text-sm text-gray-500">Imported</div>
+          <div className="bg-green-50 dark:bg-green-900/30 rounded-lg p-4">
+            <div className="text-2xl font-bold text-green-600 dark:text-green-400">{importResult.transactions_imported}</div>
+            <div className="text-sm text-secondary-500 dark:text-secondary-400">Imported</div>
           </div>
-          <div className="bg-blue-50 rounded-lg p-4">
-            <div className="text-2xl font-bold text-blue-600">{importResult.holdings_created}</div>
-            <div className="text-sm text-gray-500">Holdings Created</div>
+          <div className="bg-blue-50 dark:bg-blue-900/30 rounded-lg p-4">
+            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{importResult.holdings_created}</div>
+            <div className="text-sm text-secondary-500 dark:text-secondary-400">Holdings Created</div>
           </div>
-          <div className="bg-purple-50 rounded-lg p-4">
-            <div className="text-2xl font-bold text-purple-600">{importResult.holdings_updated}</div>
-            <div className="text-sm text-gray-500">Holdings Updated</div>
+          <div className="bg-purple-50 dark:bg-purple-900/30 rounded-lg p-4">
+            <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">{importResult.holdings_updated}</div>
+            <div className="text-sm text-secondary-500 dark:text-secondary-400">Holdings Updated</div>
           </div>
-          <div className="bg-yellow-50 rounded-lg p-4">
-            <div className="text-2xl font-bold text-yellow-600">{importResult.duplicates_skipped}</div>
-            <div className="text-sm text-gray-500">Duplicates Skipped</div>
+          <div className="bg-yellow-50 dark:bg-yellow-900/30 rounded-lg p-4">
+            <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{importResult.duplicates_skipped}</div>
+            <div className="text-sm text-secondary-500 dark:text-secondary-400">Duplicates Skipped</div>
           </div>
         </div>
       )}
@@ -534,14 +534,14 @@ export default function ImportModal({ isOpen, onClose }) {
         <>
           <button
             onClick={handleClose}
-            className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+            className="px-4 py-2 text-secondary-700 dark:text-secondary-200 bg-secondary-100 dark:bg-secondary-800 rounded-lg hover:bg-secondary-200 dark:hover:bg-secondary-700 transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={handlePreview}
             disabled={selectedFiles.length === 0 || previewMutation.isPending}
-            className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {previewMutation.isPending ? 'Loading...' : 'Preview'}
           </button>
@@ -556,14 +556,14 @@ export default function ImportModal({ isOpen, onClose }) {
           <button
             onClick={handleBack}
             disabled={isImporting}
-            className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50"
+            className="px-4 py-2 text-secondary-700 dark:text-secondary-200 bg-secondary-100 dark:bg-secondary-800 rounded-lg hover:bg-secondary-200 dark:hover:bg-secondary-700 transition-colors disabled:opacity-50 cursor-pointer"
           >
             Back
           </button>
           <button
             onClick={handleImport}
             disabled={isImporting || (previewData?.total_transactions || 0) === 0}
-            className="px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {isImporting ? 'Importing...' : `Import ${previewData?.total_transactions || 0} Transactions`}
           </button>
@@ -574,7 +574,7 @@ export default function ImportModal({ isOpen, onClose }) {
     return (
       <button
         onClick={handleClose}
-        className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+        className="px-4 py-2 text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors cursor-pointer"
       >
         Done
       </button>
