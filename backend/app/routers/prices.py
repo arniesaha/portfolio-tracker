@@ -28,7 +28,15 @@ def get_price_service():
 def save_prices_to_cache(db: Session, holdings: list, prices: Dict):
     """Save fetched prices to the cache table for instant future loads."""
     now = datetime.now()
+    seen = set()  # Track (symbol, exchange) to avoid duplicate inserts
+    saved_count = 0
+    
     for holding in holdings:
+        key = (holding.symbol, holding.exchange)
+        if key in seen:
+            continue
+        seen.add(key)
+        
         price = prices.get(holding.symbol)
         if price:
             # Upsert: insert or update if exists
@@ -50,10 +58,11 @@ def save_prices_to_cache(db: Session, holdings: list, prices: Dict):
                     updated_at=now
                 )
                 db.add(cache_entry)
+            saved_count += 1
     
     try:
         db.commit()
-        logger.info(f"Saved {len(prices)} prices to cache")
+        logger.info(f"Saved {saved_count} prices to cache")
     except Exception as e:
         logger.error(f"Failed to save prices to cache: {e}")
         db.rollback()
@@ -198,9 +207,17 @@ async def refresh_prices(db: Session = Depends(get_db)) -> Dict:
     symbols = [(h.symbol, h.exchange) for h in holdings]
     prices = PriceService.get_prices_bulk(symbols)
 
-    # Store in price history
+    # Save to CurrentPriceCache for instant loads via /cached endpoint
+    save_prices_to_cache(db, holdings, prices)
+
+    # Store in price history (deduplicate by symbol+exchange to avoid UNIQUE constraint)
     today = date.today()
+    seen = set()
     for holding in holdings:
+        key = (holding.symbol, holding.exchange)
+        if key in seen:
+            continue
+        seen.add(key)
         price = prices.get(holding.symbol)
         if price:
             # Check if we already have today's price
