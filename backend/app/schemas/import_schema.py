@@ -19,13 +19,15 @@ class ImportPlatform(str, Enum):
 class ParsedTransaction(BaseModel):
     """A single parsed transaction from CSV."""
     date: date
-    symbol: str
+    symbol: Optional[str] = None
     company_name: Optional[str] = None
-    exchange: str
-    country: str
-    transaction_type: Literal["BUY", "SELL"]
-    quantity: Decimal = Field(..., gt=0, decimal_places=4)
-    price_per_share: Decimal = Field(..., gt=0, decimal_places=4)
+    exchange: Optional[str] = None
+    country: Optional[str] = None
+    transaction_type: str  # BUY, SELL, CONT, TFR_IN, TFR_OUT
+    transaction_category: str = "TRADE"  # TRADE, CONTRIBUTION, WITHDRAWAL, TRANSFER
+    quantity: Optional[Decimal] = Field(None, gt=0, decimal_places=4)
+    price_per_share: Optional[Decimal] = Field(None, gt=0, decimal_places=4)
+    amount: Optional[Decimal] = None  # Dollar amount for contributions/withdrawals
     fees: Decimal = Field(default=Decimal("0"), ge=0, decimal_places=4)
     currency: str = "CAD"
     source: str
@@ -40,6 +42,9 @@ class ParsedTransaction(BaseModel):
         Normalizes decimal values to remove trailing zeros for consistent comparison
         with database values (which may have trailing zeros from Numeric columns).
         """
+        if self.transaction_category != "TRADE":
+            amount_str = str(self.amount.normalize()) if self.amount else "0"
+            return f"{self.date}|{self.transaction_category}|{self.transaction_type}|{amount_str}|{self.account_type or ''}"
         return f"{self.date}|{self.symbol}|{self.transaction_type}|{self.quantity.normalize()}|{self.price_per_share.normalize()}"
 
 
@@ -64,6 +69,8 @@ class ImportPreviewResponse(BaseModel):
     total_transactions: int
     buy_transactions: int
     sell_transactions: int
+    contribution_transactions: int = 0
+    transfer_transactions: int = 0
     transactions: List[ParsedTransaction]
     new_symbols: List[str]  # Symbols not in existing holdings
     existing_symbols: List[str]  # Symbols already in holdings

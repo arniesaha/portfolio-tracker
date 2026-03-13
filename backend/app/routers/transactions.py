@@ -59,7 +59,22 @@ def get_transactions_by_holding(
 
 @router.post("/", response_model=TransactionResponse, status_code=status.HTTP_201_CREATED)
 def create_transaction(transaction: TransactionCreate, db: Session = Depends(get_db)):
-    """Create a new transaction"""
+    """Create a new transaction (trade or non-trade like contributions)."""
+    # Non-trade transactions (contributions, withdrawals, transfers)
+    if transaction.transaction_category != "TRADE":
+        db_transaction = Transaction(**transaction.model_dump())
+        db.add(db_transaction)
+        db.commit()
+        db.refresh(db_transaction)
+        return db_transaction
+
+    # Trade transactions require holding_id and symbol
+    if not transaction.holding_id or not transaction.symbol:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Trade transactions require holding_id and symbol"
+        )
+
     # Verify holding exists
     holding = db.query(Holding).filter(
         Holding.id == transaction.holding_id,
