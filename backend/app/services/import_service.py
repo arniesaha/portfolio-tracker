@@ -81,6 +81,15 @@ US_SYMBOLS = {
     "MDT": ("Medtronic PLC", "NYSE", "US", "USD"),
 }
 
+# TD Direct non-trade action mappings
+TD_CONTRIBUTION_ACTIONS = {"CONT"}
+TD_TRANSFER_IN_ACTIONS = {"TFR-IN"}
+TD_TRANSFER_OUT_ACTIONS = {"TFROUT"}
+
+# Wealthsimple non-trade transaction type mappings
+WS_CONTRIBUTION_TYPES = {"CONT", "DEPOSIT"}
+WS_TRANSFER_TYPES = {"TFR-IN", "TFROUT", "TFR_IN", "TFR_OUT"}
+
 
 class ImportService:
     """Service for importing transactions from various platforms."""
@@ -96,7 +105,7 @@ class ImportService:
                 file_types=["csv"],
                 date_format="DD MMM YYYY (e.g., 05 Jan 2026)",
                 example_fields=["Trade Date", "Settle Date", "Description", "Action", "Quantity", "Price", "Commission", "Net Amount", "(Security Type)", "(Currency)"],
-                notes="Export from Accounts > Activity. Only BUY and SELL transactions are imported. Dividends (DIV, TXPDDV) and other actions are skipped.",
+                notes="Imports BUY, SELL, CONT (contributions), TFR-IN/TFROUT (transfers). Dividends (DIV, TXPDDV) are skipped.",
             ),
             SupportedFormat(
                 platform=ImportPlatform.WEALTHSIMPLE.value,
@@ -105,7 +114,7 @@ class ImportService:
                 file_types=["csv"],
                 date_format="YYYY-MM-DD",
                 example_fields=["date", "transaction", "description", "amount", "(balance)", "(currency)"],
-                notes="Export using Wealthsimple Trade Enhancer extension or Wealthica. Only BUY and SELL transactions are imported. Dividends (DIV), deposits, and withdrawals are skipped.",
+                notes="Imports BUY, SELL, CONT/DEPOSIT (contributions). Account type detected from filename (RRSP-*, TFSA-*, FHSA-*).",
             ),
         ]
 
@@ -132,7 +141,7 @@ class ImportService:
         Line 4: Trade Date,Settle Date,Description,Action,Quantity,Price,Commission,Net Amount[,Security Type,Currency]
         Line 5+: Data rows
 
-        Actions to import: BUY, SELL
+        Actions to import: BUY, SELL, CONT, TFR-IN, TFROUT
         Note: Other actions like TXPDDV (dividends), DIV, WHTX02 are skipped.
         """
         transactions = []
@@ -163,7 +172,79 @@ class ImportService:
         for row in reader:
             action = row.get('Action', '').strip()
 
-            # Only process BUY and SELL transactions
+            # Handle contribution transactions
+            if action in TD_CONTRIBUTION_ACTIONS:
+                try:
+                    trade_date_str = row.get('Trade Date', '').strip()
+                    trade_date = datetime.strptime(trade_date_str, "%d %b %Y").date()
+                    net_amount_str = row.get('Net Amount', '0').strip() or '0'
+                    net_amount = Decimal(net_amount_str)
+                    description = row.get('Description', '').strip()
+                    row_currency = row.get('Currency', '').strip() or 'CAD'
+
+                    transactions.append(ParsedTransaction(
+                        date=trade_date,
+                        transaction_type="CONT",
+                        transaction_category="CONTRIBUTION",
+                        amount=abs(net_amount),
+                        currency=row_currency,
+                        source=ImportPlatform.TD_DIRECT.value,
+                        account_type=account_type,
+                        raw_description=description,
+                    ))
+                except (ValueError, InvalidOperation) as e:
+                    warnings.append(f"Error parsing contribution row: {e}")
+                continue
+
+            # Handle transfer-in transactions
+            if action in TD_TRANSFER_IN_ACTIONS:
+                try:
+                    trade_date_str = row.get('Trade Date', '').strip()
+                    trade_date = datetime.strptime(trade_date_str, "%d %b %Y").date()
+                    net_amount_str = row.get('Net Amount', '0').strip() or '0'
+                    net_amount = Decimal(net_amount_str)
+                    description = row.get('Description', '').strip()
+                    row_currency = row.get('Currency', '').strip() or 'CAD'
+
+                    transactions.append(ParsedTransaction(
+                        date=trade_date,
+                        transaction_type="TFR_IN",
+                        transaction_category="TRANSFER",
+                        amount=abs(net_amount),
+                        currency=row_currency,
+                        source=ImportPlatform.TD_DIRECT.value,
+                        account_type=account_type,
+                        raw_description=description,
+                    ))
+                except (ValueError, InvalidOperation) as e:
+                    warnings.append(f"Error parsing transfer-in row: {e}")
+                continue
+
+            # Handle transfer-out transactions
+            if action in TD_TRANSFER_OUT_ACTIONS:
+                try:
+                    trade_date_str = row.get('Trade Date', '').strip()
+                    trade_date = datetime.strptime(trade_date_str, "%d %b %Y").date()
+                    net_amount_str = row.get('Net Amount', '0').strip() or '0'
+                    net_amount = Decimal(net_amount_str)
+                    description = row.get('Description', '').strip()
+                    row_currency = row.get('Currency', '').strip() or 'CAD'
+
+                    transactions.append(ParsedTransaction(
+                        date=trade_date,
+                        transaction_type="TFR_OUT",
+                        transaction_category="TRANSFER",
+                        amount=abs(net_amount),
+                        currency=row_currency,
+                        source=ImportPlatform.TD_DIRECT.value,
+                        account_type=account_type,
+                        raw_description=description,
+                    ))
+                except (ValueError, InvalidOperation) as e:
+                    warnings.append(f"Error parsing transfer-out row: {e}")
+                continue
+
+            # Only process BUY and SELL transactions for trades
             if action not in ('BUY', 'SELL'):
                 # Track what we're skipping
                 skipped_actions[action] = skipped_actions.get(action, 0) + 1
@@ -222,6 +303,7 @@ class ImportService:
                     exchange=exchange,
                     country=country,
                     transaction_type=action,
+                    transaction_category="TRADE",
                     quantity=quantity,
                     price_per_share=price,
                     fees=commission,
@@ -244,16 +326,37 @@ class ImportService:
         return transactions, warnings
 
     @staticmethod
-    def parse_wealthsimple_csv(content: str, account_type: Optional[str] = None) -> Tuple[List[ParsedTransaction], List[str]]:
+    def detect_account_type_from_filename(filename: Optional[str]) -> Optional[str]:
+        """Detect account type from Wealthsimple filename patterns."""
+        if not filename:
+            return None
+        filename_upper = filename.upper()
+        if "RRSP" in filename_upper:
+            return "RRSP"
+        if "TFSA" in filename_upper:
+            return "TFSA"
+        if "FHSA" in filename_upper:
+            return "FHSA"
+        if "NON-REG" in filename_upper or "NON_REG" in filename_upper or "NONREG" in filename_upper:
+            return "NON_REG"
+        return None
+
+    @staticmethod
+    def parse_wealthsimple_csv(content: str, account_type: Optional[str] = None, filename: Optional[str] = None) -> Tuple[List[ParsedTransaction], List[str]]:
         """
         Parse Wealthsimple monthly statement CSV.
 
         Format:
         date,transaction,description,amount[,balance,currency]
         2025-03-12,BUY,"NVDA - NVIDIA Corp.: Bought 5.0000 shares (executed at 2025-03-12), FX Rate: 1.4644",-1500.00
+        2025-06-15,CONT,Contribution,5000.00
         """
         transactions = []
         warnings = []
+
+        # Auto-detect account type from filename if not provided
+        if not account_type and filename:
+            account_type = ImportService.detect_account_type_from_filename(filename)
 
         reader = csv.DictReader(io.StringIO(content))
 
@@ -262,6 +365,54 @@ class ImportService:
 
         for row in reader:
             trans_type = row.get('transaction', '').strip()
+
+            # Handle contribution transactions
+            if trans_type in WS_CONTRIBUTION_TYPES:
+                try:
+                    date_str = row.get('date', '')
+                    trans_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+                    amount_str = row.get('amount', '0')
+                    amount = Decimal(amount_str)
+                    description = row.get('description', '')
+
+                    transactions.append(ParsedTransaction(
+                        date=trans_date,
+                        transaction_type="CONT",
+                        transaction_category="CONTRIBUTION",
+                        amount=abs(amount),
+                        currency="CAD",
+                        source=ImportPlatform.WEALTHSIMPLE.value,
+                        account_type=account_type,
+                        raw_description=description,
+                    ))
+                except Exception as e:
+                    warnings.append(f"Error parsing contribution row: {e}")
+                continue
+
+            # Handle transfer transactions
+            if trans_type in WS_TRANSFER_TYPES:
+                try:
+                    date_str = row.get('date', '')
+                    trans_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+                    amount_str = row.get('amount', '0')
+                    amount = Decimal(amount_str)
+                    description = row.get('description', '')
+
+                    is_in = trans_type in ("TFR-IN", "TFR_IN")
+                    transactions.append(ParsedTransaction(
+                        date=trans_date,
+                        transaction_type="TFR_IN" if is_in else "TFR_OUT",
+                        transaction_category="TRANSFER",
+                        amount=abs(amount),
+                        currency="CAD",
+                        source=ImportPlatform.WEALTHSIMPLE.value,
+                        account_type=account_type,
+                        raw_description=description,
+                    ))
+                except Exception as e:
+                    warnings.append(f"Error parsing transfer row: {e}")
+                continue
+
             if trans_type not in ('BUY', 'SELL'):
                 # Track what we're skipping
                 skipped_types[trans_type] = skipped_types.get(trans_type, 0) + 1
@@ -313,6 +464,7 @@ class ImportService:
                     exchange=exchange,
                     country=country,
                     transaction_type=trans_type,
+                    transaction_category="TRADE",
                     quantity=parsed['quantity'],
                     price_per_share=price,
                     fees=Decimal("0"),  # Wealthsimple has no explicit fees
@@ -391,7 +543,8 @@ class ImportService:
     def parse_file(
         content: str,
         platform: ImportPlatform,
-        account_type: Optional[str] = None
+        account_type: Optional[str] = None,
+        filename: Optional[str] = None
     ) -> Tuple[List[ParsedTransaction], List[str]]:
         """Parse file content based on platform."""
         decoded_content = ImportService.decode_file_content(content)
@@ -399,7 +552,7 @@ class ImportService:
         if platform == ImportPlatform.TD_DIRECT:
             return ImportService.parse_td_direct_csv(decoded_content, account_type)
         elif platform == ImportPlatform.WEALTHSIMPLE:
-            return ImportService.parse_wealthsimple_csv(decoded_content, account_type)
+            return ImportService.parse_wealthsimple_csv(decoded_content, account_type, filename)
         else:
             return [], [f"Unsupported platform: {platform}"]
 
@@ -408,10 +561,11 @@ class ImportService:
         db: Session,
         content: str,
         platform: ImportPlatform,
-        account_type: Optional[str] = None
+        account_type: Optional[str] = None,
+        filename: Optional[str] = None
     ) -> ImportPreviewResponse:
         """Preview import without saving to database."""
-        transactions, warnings = ImportService.parse_file(content, platform, account_type)
+        transactions, warnings = ImportService.parse_file(content, platform, account_type, filename)
 
         # Get existing holdings
         existing_holdings = db.query(Holding).filter(Holding.is_active == True).all()
@@ -420,10 +574,18 @@ class ImportService:
         # Get existing transactions for deduplication
         # Normalize decimals to remove trailing zeros for consistent comparison
         existing_transactions = db.query(Transaction).all()
-        existing_dedup_keys = {
-            f"{t.transaction_date}|{t.symbol}|{t.transaction_type}|{t.quantity.normalize()}|{t.price_per_share.normalize()}"
-            for t in existing_transactions
-        }
+        existing_dedup_keys = set()
+        for t in existing_transactions:
+            if t.transaction_category and t.transaction_category != "TRADE":
+                amount_str = str(t.amount.normalize()) if t.amount else "0"
+                existing_dedup_keys.add(
+                    f"{t.transaction_date}|{t.transaction_category}|{t.transaction_type}|{amount_str}|{t.account_type or ''}"
+                )
+            else:
+                if t.quantity and t.price_per_share:
+                    existing_dedup_keys.add(
+                        f"{t.transaction_date}|{t.symbol}|{t.transaction_type}|{t.quantity.normalize()}|{t.price_per_share.normalize()}"
+                    )
 
         # Categorize symbols and count duplicates
         new_symbols = set()
@@ -431,10 +593,11 @@ class ImportService:
         potential_duplicates = 0
 
         for t in transactions:
-            if t.symbol in existing_symbols:
-                import_existing_symbols.add(t.symbol)
-            else:
-                new_symbols.add(t.symbol)
+            if t.symbol:
+                if t.symbol in existing_symbols:
+                    import_existing_symbols.add(t.symbol)
+                else:
+                    new_symbols.add(t.symbol)
 
             if t.dedup_key in existing_dedup_keys:
                 potential_duplicates += 1
@@ -444,6 +607,8 @@ class ImportService:
             total_transactions=len(transactions),
             buy_transactions=len([t for t in transactions if t.transaction_type == "BUY"]),
             sell_transactions=len([t for t in transactions if t.transaction_type == "SELL"]),
+            contribution_transactions=len([t for t in transactions if t.transaction_category == "CONTRIBUTION"]),
+            transfer_transactions=len([t for t in transactions if t.transaction_category == "TRANSFER"]),
             transactions=transactions,
             new_symbols=sorted(list(new_symbols)),
             existing_symbols=sorted(list(import_existing_symbols)),
@@ -457,10 +622,11 @@ class ImportService:
         content: str,
         platform: ImportPlatform,
         account_type: Optional[str] = None,
-        skip_duplicates: bool = True
+        skip_duplicates: bool = True,
+        filename: Optional[str] = None
     ) -> ImportResult:
         """Import transactions into the database."""
-        transactions, warnings = ImportService.parse_file(content, platform, account_type)
+        transactions, warnings = ImportService.parse_file(content, platform, account_type, filename)
 
         if not transactions:
             return ImportResult(
@@ -474,12 +640,19 @@ class ImportService:
             )
 
         # Get existing transactions for deduplication
-        # Normalize decimals to remove trailing zeros for consistent comparison
         existing_transactions = db.query(Transaction).all()
-        existing_dedup_keys = {
-            f"{t.transaction_date}|{t.symbol}|{t.transaction_type}|{t.quantity.normalize()}|{t.price_per_share.normalize()}"
-            for t in existing_transactions
-        }
+        existing_dedup_keys = set()
+        for t in existing_transactions:
+            if t.transaction_category and t.transaction_category != "TRADE":
+                amount_str = str(t.amount.normalize()) if t.amount else "0"
+                existing_dedup_keys.add(
+                    f"{t.transaction_date}|{t.transaction_category}|{t.transaction_type}|{amount_str}|{t.account_type or ''}"
+                )
+            else:
+                if t.quantity and t.price_per_share:
+                    existing_dedup_keys.add(
+                        f"{t.transaction_date}|{t.symbol}|{t.transaction_type}|{t.quantity.normalize()}|{t.price_per_share.normalize()}"
+                    )
 
         # Track results
         imported_count = 0
@@ -499,14 +672,36 @@ class ImportService:
         existing_holdings = {(h.symbol, h.account_type): h for h in db.query(Holding).all()}
 
         for t in transactions:
-            holding_key = (t.symbol, t.account_type)
-
             # Check for duplicates
             if skip_duplicates and t.dedup_key in existing_dedup_keys:
                 duplicates_skipped += 1
                 continue
 
             try:
+                # Non-trade transactions (contributions, withdrawals, transfers)
+                if t.transaction_category != "TRADE":
+                    db_transaction = Transaction(
+                        holding_id=None,
+                        symbol=None,
+                        transaction_type=t.transaction_type,
+                        transaction_category=t.transaction_category,
+                        quantity=None,
+                        price_per_share=None,
+                        amount=t.amount,
+                        fees=t.fees,
+                        currency=t.currency,
+                        account_type=t.account_type,
+                        transaction_date=t.date,
+                        notes=f"Imported from {platform.value}" + (f" ({t.account_type})" if t.account_type else ""),
+                    )
+                    db.add(db_transaction)
+                    imported_count += 1
+                    existing_dedup_keys.add(t.dedup_key)
+                    continue
+
+                # Trade transactions - existing logic
+                holding_key = (t.symbol, t.account_type)
+
                 # Get or create holding for this (symbol, account_type) pair
                 if holding_key not in holdings_map:
                     if holding_key in existing_holdings:
@@ -562,11 +757,14 @@ class ImportService:
                     holding_id=holding.id,
                     symbol=t.symbol,
                     transaction_type=t.transaction_type,
+                    transaction_category="TRADE",
                     quantity=t.quantity,
                     price_per_share=t.price_per_share,
                     fees=t.fees,
+                    currency=t.currency,
+                    account_type=t.account_type,
                     transaction_date=t.date,
-                    notes=f"Imported from {platform.value}" + (f" ({account_type})" if account_type else ""),
+                    notes=f"Imported from {platform.value}" + (f" ({t.account_type})" if t.account_type else ""),
                 )
                 db.add(db_transaction)
                 imported_count += 1
@@ -575,7 +773,7 @@ class ImportService:
                 existing_dedup_keys.add(t.dedup_key)
 
             except Exception as e:
-                errors.append(f"Error importing {t.symbol} on {t.date}: {str(e)}")
+                errors.append(f"Error importing {t.symbol or t.transaction_type} on {t.date}: {str(e)}")
                 continue
 
         # Mark holdings with zero quantity as inactive

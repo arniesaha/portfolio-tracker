@@ -140,6 +140,7 @@ async def upload_and_import(
             platform=platform,
             account_type=account_type,
             skip_duplicates=skip_duplicates,
+            filename=file.filename,
         )
 
         if not result.success:
@@ -192,6 +193,7 @@ async def upload_and_preview(
             content=content_str,
             platform=platform,
             account_type=account_type,
+            filename=file.filename,
         )
 
     except UnicodeDecodeError:
@@ -249,6 +251,7 @@ async def upload_bulk_import(
                 platform=platform,
                 account_type=account_type,
                 skip_duplicates=skip_duplicates,
+                filename=file.filename,
             )
 
             # Aggregate results

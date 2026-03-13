@@ -1369,3 +1369,65 @@ def get_exchange_rates(
         "rates": rates,
         "timestamp": datetime.now().isoformat()
     }
+
+
+@router.get("/contributions")
+async def get_contributions(
+    year: Optional[int] = Query(None, description="Filter by year (e.g. 2025)"),
+    account_type: Optional[str] = Query(None, description="Filter by account type (e.g. RRSP, TFSA)"),
+    db: Session = Depends(get_db)
+):
+    """
+    Get contribution and deposit transactions grouped by account type.
+
+    Returns contributions with individual transactions and totals per account,
+    useful for tax reporting (e.g. RRSP contribution limits).
+    """
+    query = db.query(Transaction).filter(
+        Transaction.transaction_category == "CONTRIBUTION"
+    )
+
+    if year:
+        from sqlalchemy import extract
+        query = query.filter(extract("year", Transaction.transaction_date) == year)
+
+    if account_type:
+        query = query.filter(Transaction.account_type == account_type)
+
+    query = query.order_by(Transaction.transaction_date)
+    contributions = query.all()
+
+    # Group by account type
+    by_account = defaultdict(lambda: {"transactions": [], "total": Decimal("0"), "count": 0})
+
+    for c in contributions:
+        acct = c.account_type or "UNKNOWN"
+        amount = c.amount or Decimal("0")
+        by_account[acct]["transactions"].append({
+            "id": c.id,
+            "date": c.transaction_date.isoformat(),
+            "amount": float(amount),
+            "currency": c.currency or "CAD",
+            "notes": c.notes,
+        })
+        by_account[acct]["total"] += amount
+        by_account[acct]["count"] += 1
+
+    # Build response
+    accounts = []
+    grand_total = Decimal("0")
+    for acct_type, data in sorted(by_account.items()):
+        accounts.append({
+            "account_type": acct_type,
+            "total": float(data["total"]),
+            "count": data["count"],
+            "transactions": data["transactions"],
+        })
+        grand_total += data["total"]
+
+    return {
+        "year": year,
+        "grand_total": float(grand_total),
+        "total_contributions": sum(a["count"] for a in accounts),
+        "by_account_type": accounts,
+    }
