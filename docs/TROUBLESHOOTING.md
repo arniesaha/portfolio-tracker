@@ -352,3 +352,60 @@ If your issue isn't listed here:
 ---
 
 **Last Updated:** October 25, 2025
+
+---
+
+### Activity Tab Returns 500 / "Failed to load transactions"
+
+**Symptoms:**
+- Home and Holdings tabs load fine
+- Activity tab shows error or blank state
+- `GET /api/v1/transactions/` returns HTTP 500
+- Smaller requests (`?limit=20`) may succeed while default fails
+
+**Cause A: Stale backend image**
+
+The running backend container may be from an older build that's missing database columns added in a later version (e.g. `transaction_category`, `amount`, `currency`, `account_type`).
+
+Verify:
+```bash
+# Check what columns are actually in the DB
+kubectl exec -n <namespace> deployment/vault-backend -- python3 -c "
+import sqlite3
+conn = sqlite3.connect('/app/data/portfolio.db')
+cols = [c[1] for c in conn.execute('PRAGMA table_info(transactions)').fetchall()]
+print(cols)
+"
+
+# Check what fields the API actually returns
+curl http://<backend-service>:8000/api/v1/transactions/?limit=1 | python3 -m json.tool
+```
+
+Fix: Rebuild with `--no-cache` and redeploy:
+```bash
+docker build --no-cache -t <registry>/portfolio-backend:latest ./backend
+docker push <registry>/portfolio-backend:latest
+kubectl rollout restart deployment/vault-backend -n <namespace>
+```
+
+**Cause B: Stale tunnel/proxy ClusterIP**
+
+If you're accessing Vault through a reverse proxy or tunnel configured with a Kubernetes ClusterIP, that IP may have changed if the Service was deleted and recreated.
+
+Verify the ClusterIP in your tunnel/proxy config matches the live service:
+```bash
+kubectl get svc vault-backend -n <namespace>
+# Check the CLUSTER-IP column matches what your tunnel/proxy config points to
+```
+
+If mismatched: update the proxy config to the correct ClusterIP and restart.
+
+**Note:** Kubernetes ClusterIPs are stable for the lifetime of a Service object. They only change if the Service itself is deleted and recreated. Avoid deleting Services unnecessarily.
+
+**Architecture note:**
+The frontend nginx container proxies `/api/*` requests to the backend service via internal DNS (`vault-backend:8000`). API requests never pass through any external reverse proxy — they stay inside the cluster. If you're debugging why API calls fail from a browser, check that the frontend container itself can reach the backend:
+
+```bash
+kubectl exec -n <namespace> deployment/vault-frontend -- \
+  wget -qO- http://vault-backend:8000/api/v1/health
+```
