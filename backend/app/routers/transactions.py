@@ -13,18 +13,26 @@ router = APIRouter(prefix="/transactions", tags=["transactions"])
 @router.get("/", response_model=List[TransactionResponse])
 def get_transactions(
     skip: int = 0,
-    limit: int = 100,
+    limit: int = 1000,
     holding_id: Optional[int] = None,
+    symbol: Optional[str] = None,
     transaction_type: Optional[str] = None,
     start_date: Optional[date] = None,
     end_date: Optional[date] = None,
     db: Session = Depends(get_db)
 ):
-    """Get all transactions with optional filters"""
+    """Get all transactions with optional filters.
+
+    Default limit is intentionally high because the Activity page computes
+    running positions client-side and needs the full transaction history for
+    older closed positions like NVDA/TSM.
+    """
     query = db.query(Transaction)
 
     if holding_id:
         query = query.filter(Transaction.holding_id == holding_id)
+    if symbol:
+        query = query.filter(Transaction.symbol == symbol.upper())
     if transaction_type:
         query = query.filter(Transaction.transaction_type == transaction_type.upper())
     if start_date:
@@ -32,6 +40,7 @@ def get_transactions(
     if end_date:
         query = query.filter(Transaction.transaction_date <= end_date)
 
+    limit = max(1, min(limit, 5000))
     transactions = query.order_by(Transaction.transaction_date.desc()).offset(skip).limit(limit).all()
     return transactions
 
