@@ -2,6 +2,7 @@ export const formatCurrency = (value, currency = 'CAD') => {
   if (value === null || value === undefined) return '-';
 
   const numValue = typeof value === 'string' ? parseFloat(value) : value;
+  if (!Number.isFinite(numValue)) return '-';
 
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -15,6 +16,7 @@ export const formatPercent = (value) => {
   if (value === null || value === undefined) return '-';
 
   const numValue = typeof value === 'string' ? parseFloat(value) : value;
+  if (!Number.isFinite(numValue)) return '-';
 
   return `${numValue >= 0 ? '+' : ''}${numValue.toFixed(2)}%`;
 };
@@ -33,6 +35,7 @@ export const formatNumber = (value, decimals = 2) => {
   if (value === null || value === undefined) return '-';
 
   const numValue = typeof value === 'string' ? parseFloat(value) : value;
+  if (!Number.isFinite(numValue)) return '-';
 
   return numValue.toLocaleString('en-US', {
     minimumFractionDigits: decimals,

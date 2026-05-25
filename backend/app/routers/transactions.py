@@ -17,6 +17,8 @@ def get_transactions(
     holding_id: Optional[int] = None,
     symbol: Optional[str] = None,
     transaction_type: Optional[str] = None,
+    account_type: Optional[str] = None,
+    account_id: Optional[str] = None,
     start_date: Optional[date] = None,
     end_date: Optional[date] = None,
     db: Session = Depends(get_db)
@@ -35,6 +37,10 @@ def get_transactions(
         query = query.filter(Transaction.symbol == symbol.upper())
     if transaction_type:
         query = query.filter(Transaction.transaction_type == transaction_type.upper())
+    if account_type:
+        query = query.filter(Transaction.account_type == account_type.upper())
+    if account_id:
+        query = query.filter(Transaction.account_id == account_id)
     if start_date:
         query = query.filter(Transaction.transaction_date >= start_date)
     if end_date:
