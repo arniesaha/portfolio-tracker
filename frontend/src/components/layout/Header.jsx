@@ -70,19 +70,19 @@ export default function Header({ onRefresh, isRefreshing, lastUpdated, onImport,
   };
 
   return (
-    <header className="bg-[#0d1218] text-white border-b border-white/10 relative overflow-visible">
+    <header className="bg-white text-secondary-950 dark:bg-[#0d1218] dark:text-white border-b border-secondary-200/80 dark:border-white/10 relative overflow-visible transition-colors duration-200">
       <div className="container-app relative">
         <div className="flex items-center justify-between py-3 sm:py-4">
           {/* Logo and Title */}
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-teal-400/10 text-teal-200 rounded-lg border border-teal-300/20">
+            <div className="p-2 bg-teal-50 text-teal-700 dark:bg-teal-400/10 dark:text-teal-200 rounded-lg border border-teal-100 dark:border-teal-300/20">
               <VaultIcon />
             </div>
             <div>
               <h1 className="text-lg sm:text-xl font-semibold tracking-tight">
                 Vault
               </h1>
-              <p className="text-secondary-400 text-xs sm:text-sm font-medium">
+              <p className="text-secondary-500 dark:text-secondary-400 text-xs sm:text-sm font-medium">
                 Portfolio control plane
               </p>
             </div>
@@ -92,8 +92,8 @@ export default function Header({ onRefresh, isRefreshing, lastUpdated, onImport,
           <div className="flex items-center gap-2 sm:gap-4">
             {/* Last updated indicator */}
             {lastUpdated && (
-              <div className="hidden md:flex items-center gap-2 text-secondary-300 text-sm">
-                <div className="w-2 h-2 bg-teal-300 rounded-full" />
+              <div className="hidden md:flex items-center gap-2 text-secondary-500 dark:text-secondary-300 text-sm">
+                <div className="w-2 h-2 bg-teal-500 dark:bg-teal-300 rounded-full" />
                 <span>Updated {formatLastUpdated(lastUpdated)}</span>
               </div>
             )}
@@ -101,8 +101,8 @@ export default function Header({ onRefresh, isRefreshing, lastUpdated, onImport,
             {/* Theme toggle button */}
             <button
               onClick={onToggleTheme}
-              className="flex items-center gap-2 px-2.5 py-2 bg-white/5 hover:bg-white/10
-                       rounded-lg border border-white/10 transition-all duration-200 text-sm font-medium cursor-pointer"
+              className="flex items-center gap-2 px-2.5 py-2 bg-secondary-50 hover:bg-secondary-100 dark:bg-white/5 dark:hover:bg-white/10
+                       rounded-lg border border-secondary-200 dark:border-white/10 transition-all duration-200 text-sm font-medium cursor-pointer"
               title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
               aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
             >
@@ -112,8 +112,8 @@ export default function Header({ onRefresh, isRefreshing, lastUpdated, onImport,
             {/* Privacy toggle button */}
             <button
               onClick={onTogglePrivacy}
-              className="flex items-center gap-2 px-2.5 py-2 bg-white/5 hover:bg-white/10
-                       rounded-lg border border-white/10 transition-all duration-200 text-sm font-medium cursor-pointer"
+              className="flex items-center gap-2 px-2.5 py-2 bg-secondary-50 hover:bg-secondary-100 dark:bg-white/5 dark:hover:bg-white/10
+                       rounded-lg border border-secondary-200 dark:border-white/10 transition-all duration-200 text-sm font-medium cursor-pointer"
               title={privacyHidden ? 'Show amounts' : 'Hide amounts'}
               aria-label={privacyHidden ? 'Show amounts' : 'Hide amounts'}
             >
@@ -128,8 +128,8 @@ export default function Header({ onRefresh, isRefreshing, lastUpdated, onImport,
               <button
                 onClick={onRefresh}
                 disabled={isRefreshing}
-                className="flex items-center gap-2 px-2.5 py-2 bg-teal-400/10 hover:bg-teal-400/20
-                         rounded-lg border border-teal-300/20 transition-all duration-200 text-sm font-medium
+                className="flex items-center gap-2 px-2.5 py-2 bg-teal-50 hover:bg-teal-100 dark:bg-teal-400/10 dark:hover:bg-teal-400/20
+                         rounded-lg border border-teal-100 dark:border-teal-300/20 text-teal-700 dark:text-white transition-all duration-200 text-sm font-medium
                          disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Refresh prices"
               >
@@ -144,7 +144,7 @@ export default function Header({ onRefresh, isRefreshing, lastUpdated, onImport,
             <div className="relative">
               <button
                 onClick={() => setShowSettings(!showSettings)}
-                className="p-2 bg-white/5 hover:bg-white/10 rounded-lg border border-white/10 transition-colors"
+                className="p-2 bg-secondary-50 hover:bg-secondary-100 dark:bg-white/5 dark:hover:bg-white/10 rounded-lg border border-secondary-200 dark:border-white/10 transition-colors"
                 title="Settings"
               >
                 <SettingsIcon />
@@ -175,7 +175,7 @@ export default function Header({ onRefresh, isRefreshing, lastUpdated, onImport,
                       </svg>
                       Export CSV
                     </button>
-                    <div className="border-t border-secondary-100 my-1" />
+                    <div className="border-t border-secondary-100 dark:border-secondary-800 my-1" />
                     <button
                       onClick={() => { setShowSettings(false); onPreferences?.(); }}
                       className="dropdown-item flex items-center gap-2 w-full text-left"
