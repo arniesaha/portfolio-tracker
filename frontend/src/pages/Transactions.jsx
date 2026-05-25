@@ -132,16 +132,17 @@ export default function Transactions() {
   );
 
   return (
-    <div className="container-app py-6 sm:py-8">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+    <div className="container-app py-5 sm:py-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-5">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-secondary-100">Transactions</h1>
-          <p className="text-secondary-500 dark:text-secondary-400 mt-1">View and manage your transaction history</p>
+          <p className="text-xs font-semibold uppercase text-teal-700 dark:text-teal-300 mb-2">Activity ledger</p>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-secondary-950 dark:text-secondary-100">Transactions</h1>
+          <p className="text-secondary-500 dark:text-secondary-400 mt-1">Audit trades, contributions, and position events.</p>
         </div>
 
         <button
           onClick={() => setIsImportModalOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors cursor-pointer dark:bg-primary-500 dark:hover:bg-primary-600 shrink-0"
+          className="flex items-center gap-2 px-3.5 py-2 bg-teal-700 text-white rounded-lg hover:bg-teal-800 transition-colors cursor-pointer dark:bg-teal-400 dark:text-secondary-950 dark:hover:bg-teal-300 shrink-0"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
@@ -151,13 +152,13 @@ export default function Transactions() {
       </div>
 
       {/* Symbol filter — horizontally scrollable pills */}
-      <div className="flex gap-2 overflow-x-auto pb-2 mb-6 scrollbar-hide -mx-1 px-1">
+      <div className="flex gap-2 overflow-x-auto pb-2 mb-5 scrollbar-hide -mx-1 px-1">
         <button
           onClick={() => setSelectedSymbol('ALL')}
-          className={`shrink-0 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+          className={`shrink-0 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors border ${
             selectedSymbol === 'ALL'
-              ? 'bg-primary-600 text-white dark:bg-primary-500'
-              : 'bg-secondary-100 text-secondary-700 hover:bg-secondary-200 dark:bg-secondary-800 dark:text-secondary-300 dark:hover:bg-secondary-700'
+              ? 'bg-secondary-950 text-white border-secondary-950 dark:bg-white dark:text-secondary-950 dark:border-white'
+              : 'bg-white text-secondary-700 border-secondary-200 hover:bg-secondary-50 dark:bg-secondary-900 dark:text-secondary-300 dark:border-secondary-800 dark:hover:bg-secondary-800'
           }`}
         >
           All ({transactions?.length || 0})
@@ -169,10 +170,10 @@ export default function Transactions() {
             <button
               key={symbol}
               onClick={() => setSelectedSymbol(symbol)}
-              className={`shrink-0 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+              className={`shrink-0 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors border ${
                 isActive
-                  ? 'bg-primary-600 text-white dark:bg-primary-500'
-                  : 'bg-secondary-100 text-secondary-700 hover:bg-secondary-200 dark:bg-secondary-800 dark:text-secondary-300 dark:hover:bg-secondary-700'
+                  ? 'bg-secondary-950 text-white border-secondary-950 dark:bg-white dark:text-secondary-950 dark:border-white'
+                  : 'bg-white text-secondary-700 border-secondary-200 hover:bg-secondary-50 dark:bg-secondary-900 dark:text-secondary-300 dark:border-secondary-800 dark:hover:bg-secondary-800'
               }`}
             >
               {symbol} <span className="opacity-70">({count})</span>
@@ -189,15 +190,15 @@ export default function Transactions() {
 
       {/* Holdings Comparison Card */}
       {selectedSymbol !== 'ALL' && calculatedHolding && (
-        <Card className="mb-6">
-          <div className="p-6">
-            <h3 className="text-lg font-semibold text-secondary-900 dark:text-secondary-100 mb-4">
+        <Card className="mb-5" padding="none">
+          <div className="p-5">
+            <h3 className="text-lg font-semibold text-secondary-950 dark:text-secondary-100 mb-4">
               {selectedSymbol} - Holdings Verification
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Calculated from Transactions */}
               <div className="md:border-r border-secondary-200 dark:border-secondary-700 md:pr-6">
-                <h4 className="text-sm font-medium text-secondary-500 dark:text-secondary-400 uppercase mb-3">
+                <h4 className="text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase mb-3">
                   Calculated from Transactions
                 </h4>
                 <div className="space-y-2">
@@ -218,7 +219,7 @@ export default function Transactions() {
 
               {/* Current Holdings in Database */}
               <div>
-                <h4 className="text-sm font-medium text-secondary-500 dark:text-secondary-400 uppercase mb-3">
+                <h4 className="text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase mb-3">
                   Current Holdings (Database)
                 </h4>
                 {currentHolding ? (
@@ -246,7 +247,7 @@ export default function Transactions() {
                     {/* Match indicator */}
                     <div className="mt-4 pt-4 border-t border-secondary-200 dark:border-secondary-700">
                       {Math.abs(calculatedHolding.shares - currentHolding.quantity) < 0.01 ? (
-                        <div className="flex items-center text-success-600 dark:text-success-400">
+                        <div className="flex items-center text-teal-700 dark:text-teal-300">
                           <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
                           </svg>
@@ -273,40 +274,40 @@ export default function Transactions() {
         </Card>
       )}
 
-      <Card>
+      <Card padding="none">
         {sortedTransactions.length === 0 ? (
           <div className="text-center py-8 text-secondary-500 dark:text-secondary-400">
             No transactions found
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-secondary-200 dark:divide-secondary-700">
-              <thead className="bg-secondary-50 dark:bg-secondary-800">
+            <table className="min-w-full divide-y divide-secondary-200 dark:divide-secondary-800">
+              <thead className="bg-[#f9faf7] dark:bg-secondary-900">
                 <tr>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
+                  <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase">
                     Date
                   </th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
+                  <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase">
                     Symbol
                   </th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
+                  <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase">
                     Type
                   </th>
-                  <th scope="col" className="px-4 py-3 text-right text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
+                  <th scope="col" className="px-4 py-3 text-right text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase">
                     Quantity
                   </th>
-                  <th scope="col" className="px-4 py-3 text-right text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
+                  <th scope="col" className="px-4 py-3 text-right text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase">
                     Price
                   </th>
-                  <th scope="col" className="px-4 py-3 text-right text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
+                  <th scope="col" className="px-4 py-3 text-right text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase">
                     Total Value
                   </th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
+                  <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase">
                     Notes
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-secondary-900 divide-y divide-secondary-100 dark:divide-secondary-800">
+              <tbody className="bg-white dark:bg-[#10161d] divide-y divide-secondary-100 dark:divide-secondary-800">
                 {sortedTransactions.map((transaction) => {
                   const quantity = parseFloat(transaction.quantity);
                   const price = parseFloat(transaction.price_per_share);
@@ -329,7 +330,7 @@ export default function Transactions() {
                         : 'bg-primary-100 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300';
 
                   return (
-                    <tr key={transaction.id} className="hover:bg-secondary-50 dark:hover:bg-secondary-800/50 transition-colors">
+                    <tr key={transaction.id} className="hover:bg-[#f8faf5] dark:hover:bg-secondary-800/50 transition-colors">
                       <td className="px-4 py-3 whitespace-nowrap text-sm text-secondary-900 dark:text-secondary-100">
                         {formatDate(transaction.transaction_date)}
                       </td>
@@ -337,7 +338,7 @@ export default function Transactions() {
                         <div className="text-sm font-bold text-secondary-900 dark:text-secondary-100">{transaction.symbol || '-'}</div>
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
-                        <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${typeClass}`}>
+                        <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded ${typeClass}`}>
                           {transaction.transaction_type}
                         </span>
                       </td>
@@ -363,33 +364,33 @@ export default function Transactions() {
       </Card>
 
       {/* Summary Statistics */}
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
         <Card>
           <div className="p-4">
-            <div className="text-sm font-medium text-secondary-500 dark:text-secondary-400">
+            <div className="text-[11px] font-semibold uppercase text-secondary-500 dark:text-secondary-400">
               {selectedSymbol === 'ALL' ? 'Total Buys' : `${selectedSymbol} Buys`}
             </div>
-            <div className="text-2xl font-bold text-success-600 dark:text-success-400 mt-1 tabular-nums">
+            <div className="text-2xl font-semibold text-teal-700 dark:text-teal-300 mt-1 tabular-nums">
               {sortedTransactions.filter(t => t.transaction_type === 'BUY').length}
             </div>
           </div>
         </Card>
         <Card>
           <div className="p-4">
-            <div className="text-sm font-medium text-secondary-500 dark:text-secondary-400">
+            <div className="text-[11px] font-semibold uppercase text-secondary-500 dark:text-secondary-400">
               {selectedSymbol === 'ALL' ? 'Total Sells' : `${selectedSymbol} Sells`}
             </div>
-            <div className="text-2xl font-bold text-danger-600 dark:text-danger-400 mt-1 tabular-nums">
+            <div className="text-2xl font-semibold text-danger-600 dark:text-danger-400 mt-1 tabular-nums">
               {sortedTransactions.filter(t => t.transaction_type === 'SELL').length}
             </div>
           </div>
         </Card>
         <Card>
           <div className="p-4">
-            <div className="text-sm font-medium text-secondary-500 dark:text-secondary-400">
+            <div className="text-[11px] font-semibold uppercase text-secondary-500 dark:text-secondary-400">
               {selectedSymbol === 'ALL' ? 'Total Transactions' : `${selectedSymbol} Transactions`}
             </div>
-            <div className="text-2xl font-bold text-secondary-900 dark:text-secondary-100 mt-1 tabular-nums">
+            <div className="text-2xl font-semibold text-secondary-950 dark:text-secondary-100 mt-1 tabular-nums">
               {sortedTransactions.length}
             </div>
           </div>

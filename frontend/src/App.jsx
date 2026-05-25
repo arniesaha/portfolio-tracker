@@ -27,15 +27,15 @@ const queryClient = new QueryClient({
 // Loading overlay component
 function LoadingOverlay({ status }) {
   return (
-    <div className="fixed inset-0 bg-secondary-900/50 dark:bg-secondary-950/70 backdrop-blur-sm z-50 flex items-center justify-center">
-      <div className="bg-white dark:bg-secondary-900 rounded-2xl shadow-xl p-8 max-w-md w-full mx-4">
+    <div className="fixed inset-0 bg-secondary-950/45 dark:bg-secondary-950/70 backdrop-blur-sm z-50 flex items-center justify-center">
+      <div className="bg-white dark:bg-secondary-900 rounded-lg shadow-xl p-8 max-w-md w-full mx-4 border border-secondary-200 dark:border-secondary-800">
         <div className="flex flex-col items-center text-center">
           {/* Animated loader */}
           <div className="relative mb-6">
-            <div className="w-20 h-20 border-4 border-primary-100 dark:border-primary-900 rounded-full" />
-            <div className="absolute top-0 left-0 w-20 h-20 border-4 border-transparent border-t-primary-600 dark:border-t-primary-400 rounded-full animate-spin" />
+            <div className="w-20 h-20 border-4 border-teal-100 dark:border-teal-950 rounded-full" />
+            <div className="absolute top-0 left-0 w-20 h-20 border-4 border-transparent border-t-teal-600 dark:border-t-teal-400 rounded-full animate-spin" />
             <div className="absolute inset-0 flex items-center justify-center">
-              <svg className="w-8 h-8 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-8 h-8 text-teal-700 dark:text-teal-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
               </svg>
             </div>
@@ -62,7 +62,7 @@ function LoadingOverlay({ status }) {
           {/* Indeterminate progress bar */}
           <div className="w-full mt-2">
             <div className="w-full bg-secondary-100 dark:bg-secondary-800 rounded-full h-1.5 overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-primary-400 via-primary-600 to-primary-400 rounded-full animate-pulse w-full" />
+              <div className="h-full bg-teal-600 dark:bg-teal-400 rounded-full animate-pulse w-full" />
             </div>
           </div>
 
@@ -184,7 +184,7 @@ function AppContent() {
   const showLoadingOverlay = status?.is_loading && !status?.ready;
 
   return (
-    <div className="min-h-screen bg-secondary-50 dark:bg-secondary-950 transition-colors duration-200">
+    <div className="min-h-screen bg-[#f6f7f4] dark:bg-[#090d11] transition-colors duration-200">
       {showLoadingOverlay && <LoadingOverlay status={status} />}
       <Header
         onRefresh={summary?.holdings_count > 0 ? handleRefresh : null}

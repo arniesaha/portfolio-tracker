@@ -17,8 +17,8 @@ const COUNTRY_NAMES = {
 export default function TopHoldings({ holdings, isLoading }) {
   if (isLoading) {
     return (
-      <div className="bg-white dark:bg-secondary-900 rounded-xl shadow-soft dark:shadow-none border border-secondary-100 dark:border-secondary-800">
-        <div className="px-6 py-4 border-b border-secondary-100 dark:border-secondary-800">
+      <div className="bg-white dark:bg-[#10161d] rounded-lg shadow-none border border-secondary-200/80 dark:border-secondary-800">
+        <div className="px-5 py-4 border-b border-secondary-200/80 dark:border-secondary-800">
           <h3 className="text-lg font-semibold text-secondary-900 dark:text-secondary-100">Top Holdings</h3>
           <p className="text-sm text-secondary-500 dark:text-secondary-400 mt-0.5">Your largest positions by value</p>
         </div>
@@ -29,7 +29,7 @@ export default function TopHoldings({ holdings, isLoading }) {
 
   if (!holdings || holdings.length === 0) {
     return (
-      <div className="bg-white dark:bg-secondary-900 rounded-xl shadow-soft dark:shadow-none border border-secondary-100 dark:border-secondary-800 p-6">
+      <div className="bg-white dark:bg-[#10161d] rounded-lg shadow-none border border-secondary-200/80 dark:border-secondary-800 p-6">
         <h3 className="text-lg font-semibold text-secondary-900 dark:text-secondary-100 mb-4">Top Holdings</h3>
         <div className="flex items-center justify-center py-12 text-secondary-400 dark:text-secondary-500">
           <div className="text-center">
@@ -47,35 +47,35 @@ export default function TopHoldings({ holdings, isLoading }) {
   const maxPercentage = Math.max(...topHoldings.map(h => h.percentage));
 
   return (
-    <div className="bg-white dark:bg-secondary-900 rounded-xl shadow-soft dark:shadow-none border border-secondary-100 dark:border-secondary-800 overflow-hidden">
-      <div className="px-6 py-4 border-b border-secondary-100 dark:border-secondary-800">
-        <h3 className="text-lg font-semibold text-secondary-900 dark:text-secondary-100">Top Holdings</h3>
+    <div className="bg-white dark:bg-[#10161d] rounded-lg shadow-none border border-secondary-200/80 dark:border-secondary-800 overflow-hidden">
+      <div className="px-5 py-4 border-b border-secondary-200/80 dark:border-secondary-800">
+        <h3 className="text-lg font-semibold text-secondary-950 dark:text-secondary-100">Top Holdings</h3>
         <p className="text-sm text-secondary-500 dark:text-secondary-400 mt-0.5">Your largest positions by value</p>
       </div>
 
       <div className="overflow-x-auto">
         <table className="min-w-full">
           <thead>
-            <tr className="bg-secondary-50 dark:bg-secondary-800 border-b border-secondary-100 dark:border-secondary-700">
-              <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
+            <tr className="bg-[#f9faf7] dark:bg-secondary-900 border-b border-secondary-200/80 dark:border-secondary-800">
+              <th className="px-4 py-3 text-left text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase">
                 #
               </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase">
                 Stock
               </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase">
                 Country
               </th>
-              <th className="px-6 py-4 text-right text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
+              <th className="px-4 py-3 text-right text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase">
                 Shares
               </th>
-              <th className="px-6 py-4 text-right text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
+              <th className="px-4 py-3 text-right text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase">
                 Price
               </th>
-              <th className="px-6 py-4 text-right text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
+              <th className="px-4 py-3 text-right text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase">
                 Value (CAD)
               </th>
-              <th className="px-6 py-4 text-right text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider w-48">
+              <th className="px-4 py-3 text-right text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase w-48">
                 Weight
               </th>
             </tr>
@@ -84,14 +84,14 @@ export default function TopHoldings({ holdings, isLoading }) {
             {topHoldings.map((holding, index) => (
               <tr
                 key={holding.symbol}
-                className="hover:bg-secondary-50 dark:hover:bg-secondary-800/50 transition-colors"
+                className="hover:bg-[#f8faf5] dark:hover:bg-secondary-800/50 transition-colors"
               >
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-secondary-100 dark:bg-secondary-800 text-secondary-600 dark:text-secondary-400 text-xs font-medium">
+                <td className="px-4 py-3 whitespace-nowrap">
+                  <span className="inline-flex items-center justify-center w-6 h-6 rounded bg-secondary-100 dark:bg-secondary-800 text-secondary-600 dark:text-secondary-400 text-xs font-medium">
                     {index + 1}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-4 py-3 whitespace-nowrap">
                   <div>
                     <div className="text-sm font-semibold text-secondary-900 dark:text-secondary-100">{holding.symbol}</div>
                     <div className="text-xs text-secondary-500 dark:text-secondary-400 truncate max-w-[200px]">
@@ -99,25 +99,25 @@ export default function TopHoldings({ holdings, isLoading }) {
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-4 py-3 whitespace-nowrap">
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${COUNTRY_STYLES[holding.country] || 'bg-secondary-100 text-secondary-700 dark:bg-secondary-800 dark:text-secondary-300'}`}>
                     {COUNTRY_NAMES[holding.country] || holding.country}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-secondary-900 dark:text-secondary-100 tabular-nums">
+                <td className="px-4 py-3 whitespace-nowrap text-sm text-right text-secondary-900 dark:text-secondary-100 tabular-nums">
                   {parseFloat(holding.quantity).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 4 })}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-secondary-900 dark:text-secondary-100 tabular-nums">
+                <td className="px-4 py-3 whitespace-nowrap text-sm text-right text-secondary-900 dark:text-secondary-100 tabular-nums">
                   {holding.current_price ? formatCurrency(holding.current_price, holding.currency) : '-'}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-right text-secondary-900 dark:text-secondary-100 tabular-nums">
+                <td className="px-4 py-3 whitespace-nowrap text-sm font-semibold text-right text-secondary-900 dark:text-secondary-100 tabular-nums">
                   {formatCurrency(holding.market_value, 'CAD')}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-4 py-3 whitespace-nowrap">
                   <div className="flex items-center justify-end gap-3">
-                    <div className="w-24 h-2 bg-secondary-100 dark:bg-secondary-700 rounded-full overflow-hidden">
+                    <div className="w-24 h-2 bg-secondary-100 dark:bg-secondary-700 rounded overflow-hidden">
                       <div
-                        className="h-full rounded-full bg-gradient-to-r from-primary-500 to-primary-600 transition-all duration-500"
+                        className="h-full rounded bg-teal-600 dark:bg-teal-400 transition-all duration-500"
                         style={{ width: `${(holding.percentage / maxPercentage) * 100}%` }}
                       />
                     </div>

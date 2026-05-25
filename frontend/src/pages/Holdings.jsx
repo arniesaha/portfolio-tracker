@@ -52,12 +52,13 @@ export default function Holdings() {
   };
 
   return (
-    <div className="container-app py-6 sm:py-8">
+    <div className="container-app py-5 sm:py-6">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-secondary-100">Holdings</h1>
-          <p className="text-secondary-500 dark:text-secondary-400 mt-1">Manage your investment portfolio</p>
+          <p className="text-xs font-semibold uppercase text-teal-700 dark:text-teal-300 mb-2">Positions</p>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-secondary-950 dark:text-secondary-100">Holdings</h1>
+          <p className="text-secondary-500 dark:text-secondary-400 mt-1">Manage accounts, costs, and position metadata.</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           {/* Account Type Filter */}
@@ -66,7 +67,7 @@ export default function Holdings() {
             <select
               value={accountTypeFilter}
               onChange={(e) => setAccountTypeFilter(e.target.value)}
-              className="text-sm border border-secondary-200 dark:border-secondary-700 rounded-lg px-3 py-2 bg-white dark:bg-secondary-800 text-secondary-700 dark:text-secondary-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent cursor-pointer"
+              className="text-sm border border-secondary-200 dark:border-secondary-700 rounded-lg px-3 py-2 bg-white dark:bg-secondary-900 text-secondary-700 dark:text-secondary-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent cursor-pointer"
             >
               <option value="">All Accounts</option>
               {accountTypes.map((type) => (
@@ -84,7 +85,7 @@ export default function Holdings() {
       </div>
 
       {/* Holdings Card */}
-      <div className="bg-white dark:bg-secondary-900 rounded-xl shadow-soft dark:shadow-none border border-secondary-100 dark:border-secondary-800 overflow-hidden">
+      <div className="bg-white dark:bg-[#10161d] rounded-lg shadow-none border border-secondary-200/80 dark:border-secondary-800 overflow-hidden">
         {isLoading && (
           <SkeletonTable rows={5} />
         )}

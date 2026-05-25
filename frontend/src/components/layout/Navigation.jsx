@@ -48,10 +48,10 @@ export default function Navigation() {
   ];
 
   return (
-    <nav className="bg-white dark:bg-secondary-900 border-b border-secondary-200 dark:border-secondary-800 sticky top-0 z-30 transition-colors duration-200">
+    <nav className="bg-white/95 dark:bg-[#10161d]/95 border-b border-secondary-200/80 dark:border-secondary-800 sticky top-0 z-30 transition-colors duration-200 backdrop-blur">
       <div className="container-app">
         {/* Horizontal scrollable tabs - always visible */}
-        <div className="flex items-center overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div className="flex items-center overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 gap-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path;
@@ -61,15 +61,15 @@ export default function Navigation() {
                 key={item.path}
                 to={item.path}
                 className={`
-                  flex items-center gap-2 px-4 py-3 sm:py-4 font-medium text-sm whitespace-nowrap
-                  border-b-2 transition-all duration-200 flex-shrink-0
+                  flex items-center gap-2 px-3 py-2.5 my-2 font-medium text-sm whitespace-nowrap
+                  rounded-lg transition-all duration-200 flex-shrink-0 border border-transparent
                   ${isActive
-                    ? 'border-primary-600 text-primary-700 dark:border-primary-400 dark:text-primary-300'
-                    : 'border-transparent text-secondary-500 hover:text-secondary-700 hover:border-secondary-300 dark:text-secondary-400 dark:hover:text-secondary-200 dark:hover:border-secondary-600'
+                    ? 'bg-secondary-950 text-white dark:bg-white dark:text-secondary-950'
+                    : 'text-secondary-500 hover:text-secondary-900 hover:bg-secondary-100/80 dark:text-secondary-400 dark:hover:text-secondary-100 dark:hover:bg-secondary-800'
                   }
                 `}
               >
-                <Icon className={`w-5 h-5 ${isActive ? 'text-primary-600 dark:text-primary-400' : ''}`} />
+                <Icon className="w-4 h-4" />
                 {/* Show short label on mobile, full label on desktop */}
                 <span className="sm:hidden">{item.shortLabel}</span>
                 <span className="hidden sm:inline">{item.label}</span>

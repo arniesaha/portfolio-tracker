@@ -61,16 +61,16 @@ function StatCard({ title, value, subtitle, trend, icon: Icon, iconBgColor, icon
     .replace('text-danger-600', 'text-danger-600 dark:text-danger-400');
 
   return (
-    <div className="bg-white dark:bg-secondary-900 rounded-xl shadow-soft dark:shadow-none border border-secondary-100 dark:border-secondary-800 p-5 sm:p-6 transition-all duration-200 hover:shadow-soft-lg dark:hover:bg-secondary-800/50 hover:border-secondary-200 dark:hover:border-secondary-700 relative">
+    <div className="bg-white dark:bg-[#10161d] rounded-lg shadow-none border border-secondary-200/80 dark:border-secondary-800 p-4 sm:p-5 transition-all duration-200 hover:bg-[#fbfcf9] dark:hover:bg-[#141b23] hover:border-secondary-300 dark:hover:border-secondary-700 relative">
       {Icon && (
-        <div className={`absolute top-4 right-4 ${darkIconBgColor} ${darkIconColor} p-2.5 rounded-xl`}>
-          <Icon className="w-5 h-5" />
+        <div className={`absolute top-4 right-4 ${darkIconBgColor} ${darkIconColor} p-2 rounded-lg`}>
+          <Icon className="w-4 h-4" />
         </div>
       )}
       <div>
-        <p className="text-sm font-medium text-secondary-500 dark:text-secondary-400 pr-12">{title}</p>
+        <p className="text-[11px] font-semibold uppercase text-secondary-500 dark:text-secondary-400 pr-12">{title}</p>
         <p 
-          className={`text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-secondary-100 mt-2 tabular-nums ${isPrivate ? 'cursor-pointer select-none hover:text-primary-600 dark:hover:text-primary-400 transition-colors' : ''}`}
+          className={`text-2xl sm:text-[1.7rem] font-semibold text-secondary-950 dark:text-secondary-100 mt-2 tabular-nums ${isPrivate ? 'cursor-pointer select-none hover:text-teal-700 dark:hover:text-teal-300 transition-colors' : ''}`}
           onClick={isPrivate ? onTogglePrivacy : undefined}
           title={isPrivate ? 'Click to reveal' : undefined}
         >
@@ -105,7 +105,7 @@ export default function SummaryCards({ summary, realizedGains, isLoading, displa
   
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[1, 2, 3, 4].map((i) => (
           <SkeletonCard key={i} />
         ))}
@@ -161,7 +161,7 @@ export default function SummaryCards({ summary, realizedGains, isLoading, displa
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
       {cards.map((card, index) => (
         <StatCard key={index} {...card} isPrivate={isHidden} onTogglePrivacy={togglePrivacy} />
       ))}

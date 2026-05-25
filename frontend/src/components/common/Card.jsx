@@ -9,16 +9,16 @@ export default function Card({
   const paddingStyles = {
     none: '',
     sm: 'p-4',
-    default: 'p-6',
-    lg: 'p-8',
+    default: 'p-5 sm:p-6',
+    lg: 'p-6 sm:p-8',
   };
 
   return (
     <div
       className={`
-        bg-white dark:bg-secondary-900 rounded-xl shadow-soft dark:shadow-none border border-secondary-100 dark:border-secondary-800
+        bg-white dark:bg-[#10161d] rounded-lg shadow-none border border-secondary-200/80 dark:border-secondary-800
         ${paddingStyles[padding]}
-        ${hover ? 'transition-all duration-200 hover:shadow-soft-lg dark:hover:bg-secondary-800/50 hover:border-secondary-200 dark:hover:border-secondary-700 cursor-pointer' : ''}
+        ${hover ? 'transition-all duration-200 hover:bg-[#fbfcf9] dark:hover:bg-[#141b23] hover:border-secondary-300 dark:hover:border-secondary-700 cursor-pointer' : ''}
         ${className}
       `}
       onClick={onClick}
@@ -39,15 +39,15 @@ export function CardWithHeader({
   bodyClassName = '',
 }) {
   return (
-    <div className={`bg-white dark:bg-secondary-900 rounded-xl shadow-soft dark:shadow-none border border-secondary-100 dark:border-secondary-800 ${className}`}>
-      <div className="px-6 py-4 border-b border-secondary-100 dark:border-secondary-800 flex items-center justify-between">
+    <div className={`bg-white dark:bg-[#10161d] rounded-lg shadow-none border border-secondary-200/80 dark:border-secondary-800 ${className}`}>
+      <div className="px-5 py-4 border-b border-secondary-200/80 dark:border-secondary-800 flex items-center justify-between">
         <div>
           <h3 className="text-lg font-semibold text-secondary-900 dark:text-secondary-100">{title}</h3>
           {subtitle && <p className="text-sm text-secondary-500 dark:text-secondary-400 mt-0.5">{subtitle}</p>}
         </div>
         {action && <div>{action}</div>}
       </div>
-      <div className={`p-6 ${bodyClassName}`}>{children}</div>
+      <div className={`p-5 sm:p-6 ${bodyClassName}`}>{children}</div>
     </div>
   );
 }
@@ -65,7 +65,7 @@ export function StatCard({
   const isPositive = trend === undefined || trend >= 0;
 
   return (
-    <div className="bg-white dark:bg-secondary-900 rounded-xl shadow-soft dark:shadow-none border border-secondary-100 dark:border-secondary-800 p-6 transition-all duration-200 hover:shadow-soft-lg dark:hover:bg-secondary-800/50 hover:border-secondary-200 dark:hover:border-secondary-700">
+    <div className="bg-white dark:bg-[#10161d] rounded-lg shadow-none border border-secondary-200/80 dark:border-secondary-800 p-5 transition-all duration-200 hover:bg-[#fbfcf9] dark:hover:bg-[#141b23] hover:border-secondary-300 dark:hover:border-secondary-700">
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <p className="text-sm font-medium text-secondary-500 dark:text-secondary-400">{title}</p>
@@ -98,7 +98,7 @@ export function StatCard({
           )}
         </div>
         {Icon && (
-          <div className={`${iconBgColor} ${iconColor} p-3 rounded-xl`}>
+          <div className={`${iconBgColor} ${iconColor} p-2.5 rounded-lg`}>
             <Icon className="w-6 h-6" />
           </div>
         )}

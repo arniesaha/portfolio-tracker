@@ -35,7 +35,7 @@ const RefreshIcon = ({ className }) => (
 // Subtle refresh indicator shown when updating prices in background
 function RefreshIndicator({ source }) {
   return (
-    <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 text-sm rounded-full">
+    <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 text-sm rounded">
       <RefreshIcon className="w-4 h-4 animate-spin" />
       <span>Updating prices...</span>
     </div>
@@ -50,7 +50,7 @@ function SourceBadge({ source, isRefreshing }) {
   
   if (source === 'cache') {
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 text-xs rounded">
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300 text-xs rounded">
         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
         </svg>
@@ -60,7 +60,7 @@ function SourceBadge({ source, isRefreshing }) {
   }
   
   return (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs rounded">
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-teal-50 dark:bg-teal-950/30 text-teal-700 dark:text-teal-300 text-xs rounded">
       <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
       </svg>
@@ -154,7 +154,7 @@ export default function Dashboard() {
           <h1 className="text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-secondary-100">Dashboard</h1>
           <p className="text-secondary-500 dark:text-secondary-400 mt-1">Overview of your investment portfolio</p>
         </div>
-        <div className="bg-white dark:bg-secondary-900 rounded-xl shadow-soft dark:shadow-none border border-secondary-100 dark:border-secondary-800 p-8">
+        <div className="bg-white dark:bg-[#10161d] rounded-lg shadow-none border border-secondary-200/80 dark:border-secondary-800 p-8">
           <ErrorMessage
             message="Unable to load portfolio data. Please check if the backend server is running."
           />
@@ -171,15 +171,18 @@ export default function Dashboard() {
   const hasHoldings = summary && summary.holdings_count > 0;
 
   return (
-    <div className="container-app py-6 sm:py-8">
+    <div className="container-app py-5 sm:py-6">
       {/* Page Header */}
-      <div className="mb-6 sm:mb-8 flex flex-wrap items-center justify-between gap-4">
+      <div className="mb-5 sm:mb-6 rounded-lg border border-secondary-200/80 dark:border-secondary-800 bg-white dark:bg-[#10161d] overflow-hidden">
+        <div className="surface-grid px-5 py-5 sm:px-6 sm:py-6 dark:bg-secondary-950/20">
+          <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-secondary-900 dark:text-secondary-100">Dashboard</h1>
-          <p className="text-secondary-500 dark:text-secondary-400 mt-1">Overview of your investment portfolio</p>
+          <p className="text-xs font-semibold uppercase text-teal-700 dark:text-teal-300 mb-2">Live portfolio</p>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-secondary-950 dark:text-secondary-100">Dashboard</h1>
+          <p className="text-secondary-500 dark:text-secondary-400 mt-1">Allocation, performance, and risk surfaces in one scan.</p>
         </div>
         
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2">
           {/* Region Filter */}
           <RegionFilter value={region} onChange={setRegion} />
           
@@ -191,10 +194,12 @@ export default function Dashboard() {
             <SourceBadge source={summarySource} isRefreshing={isRefreshing} />
           )}
         </div>
+          </div>
+        </div>
       </div>
 
       {!hasHoldings ? (
-        <div className="bg-white dark:bg-secondary-900 rounded-xl shadow-soft dark:shadow-none border border-secondary-100 dark:border-secondary-800">
+        <div className="bg-white dark:bg-[#10161d] rounded-lg shadow-none border border-secondary-200/80 dark:border-secondary-800">
           <EmptyState
             icon={ChartIcon}
             title="Welcome to Portfolio Tracker"
@@ -207,7 +212,7 @@ export default function Dashboard() {
           />
         </div>
       ) : (
-        <div className="space-y-6 sm:space-y-8">
+        <div className="space-y-4 sm:space-y-5">
           {/* Summary Cards */}
           <section>
             <SummaryCards 

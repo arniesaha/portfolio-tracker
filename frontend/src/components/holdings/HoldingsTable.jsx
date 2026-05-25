@@ -84,29 +84,29 @@ export default function HoldingsTable({ holdings, onEdit, onDelete }) {
     <div className="overflow-x-auto">
       <table className="min-w-full">
         <thead>
-          <tr className="bg-secondary-50 dark:bg-secondary-800 border-b border-secondary-200 dark:border-secondary-700">
-            <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
+          <tr className="bg-[#f9faf7] dark:bg-secondary-900 border-b border-secondary-200 dark:border-secondary-800">
+            <th className="px-4 py-3 text-left text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase">
               Stock
             </th>
-            <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
+            <th className="px-4 py-3 text-left text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase">
               Account
             </th>
-            <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
+            <th className="px-4 py-3 text-left text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase">
               Exchange
             </th>
-            <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider hidden lg:table-cell">
+            <th className="px-4 py-3 text-left text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase hidden lg:table-cell">
               Country
             </th>
-            <th className="px-6 py-4 text-right text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
+            <th className="px-4 py-3 text-right text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase">
               Quantity
             </th>
-            <th className="px-6 py-4 text-right text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
+            <th className="px-4 py-3 text-right text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase">
               Avg Cost
             </th>
-            <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider hidden md:table-cell">
+            <th className="px-4 py-3 text-left text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase hidden md:table-cell">
               First Purchase
             </th>
-            <th className="px-6 py-4 text-right text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
+            <th className="px-4 py-3 text-right text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase">
               Actions
             </th>
           </tr>
@@ -115,9 +115,9 @@ export default function HoldingsTable({ holdings, onEdit, onDelete }) {
           {holdings.map((holding, index) => (
             <tr
               key={holding.id}
-              className={`hover:bg-secondary-50 dark:hover:bg-secondary-800/50 transition-colors ${index % 2 === 1 ? 'bg-secondary-50/50 dark:bg-secondary-800/30' : ''}`}
+              className={`hover:bg-[#f8faf5] dark:hover:bg-secondary-800/50 transition-colors ${index % 2 === 1 ? 'bg-[#fbfcf9] dark:bg-secondary-900/50' : ''}`}
             >
-              <td className="px-6 py-4 whitespace-nowrap">
+              <td className="px-4 py-3 whitespace-nowrap">
                 <div>
                   <div className="text-sm font-semibold text-secondary-900 dark:text-secondary-100">{holding.symbol}</div>
                   <div className="text-xs text-secondary-500 dark:text-secondary-400 truncate max-w-[200px]">
@@ -125,7 +125,7 @@ export default function HoldingsTable({ holdings, onEdit, onDelete }) {
                   </div>
                 </div>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">
+              <td className="px-4 py-3 whitespace-nowrap">
                 {holding.account_type ? (
                   <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${ACCOUNT_STYLES[holding.account_type] || 'bg-secondary-100 text-secondary-700 dark:bg-secondary-800 dark:text-secondary-300'}`}>
                     {ACCOUNT_NAMES[holding.account_type] || holding.account_type}
@@ -134,26 +134,26 @@ export default function HoldingsTable({ holdings, onEdit, onDelete }) {
                   <span className="text-xs text-secondary-400 dark:text-secondary-500 italic">Not set</span>
                 )}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">
+              <td className="px-4 py-3 whitespace-nowrap">
                 <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ring-1 ring-inset ${EXCHANGE_STYLES[holding.exchange] || 'bg-secondary-50 text-secondary-600 ring-secondary-500/20 dark:bg-secondary-800 dark:text-secondary-400'}`}>
                   {holding.exchange}
                 </span>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap hidden lg:table-cell">
-                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${COUNTRY_STYLES[holding.country] || 'bg-secondary-100 text-secondary-700 dark:bg-secondary-800 dark:text-secondary-300'}`}>
+              <td className="px-4 py-3 whitespace-nowrap hidden lg:table-cell">
+                <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${COUNTRY_STYLES[holding.country] || 'bg-secondary-100 text-secondary-700 dark:bg-secondary-800 dark:text-secondary-300'}`}>
                   {holding.country}
                 </span>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-secondary-900 dark:text-secondary-100 tabular-nums font-medium">
+              <td className="px-4 py-3 whitespace-nowrap text-sm text-right text-secondary-900 dark:text-secondary-100 tabular-nums font-medium">
                 {formatNumber(holding.quantity, 4)}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-secondary-900 dark:text-secondary-100 tabular-nums">
+              <td className="px-4 py-3 whitespace-nowrap text-sm text-right text-secondary-900 dark:text-secondary-100 tabular-nums">
                 {formatCurrency(holding.avg_purchase_price, holding.currency)}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary-500 dark:text-secondary-400 hidden md:table-cell">
+              <td className="px-4 py-3 whitespace-nowrap text-sm text-secondary-500 dark:text-secondary-400 hidden md:table-cell">
                 {formatDate(holding.first_purchase_date)}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-right">
+              <td className="px-4 py-3 whitespace-nowrap text-right">
                 <div className="flex items-center justify-end gap-1">
                   <IconButton
                     icon={EditIcon}

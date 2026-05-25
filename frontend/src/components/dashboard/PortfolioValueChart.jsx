@@ -104,7 +104,7 @@ export default function PortfolioValueChart() {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-white dark:bg-secondary-800 p-4 border border-secondary-200 dark:border-secondary-700 rounded-lg shadow-lg">
+        <div className="bg-white dark:bg-secondary-900 p-4 border border-secondary-200 dark:border-secondary-700 rounded-lg shadow-lg">
           <p className="text-sm font-medium text-secondary-900 dark:text-secondary-100 mb-2">{data.fullDate}</p>
           <div className="space-y-1">
             <div className="flex justify-between gap-4">
@@ -127,11 +127,11 @@ export default function PortfolioValueChart() {
   return (
     <Card>
       {/* Header with title and period selector */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 gap-4">
         <div>
-          <h3 className="text-lg font-semibold text-secondary-900 dark:text-secondary-100">Portfolio Value Over Time</h3>
+          <h3 className="text-lg font-semibold text-secondary-950 dark:text-secondary-100">Portfolio Value Over Time</h3>
           <div className="flex items-center gap-2 mt-1">
-            <span className={`text-2xl font-bold ${isPositive ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400'}`}>
+            <span className={`text-2xl font-semibold tabular-nums ${isPositive ? 'text-teal-700 dark:text-teal-300' : 'text-danger-600 dark:text-danger-400'}`}>
               {isPositive ? '+' : ''}{formatCurrency(valueChange)}
             </span>
             <span className={`text-sm font-medium ${isPositive ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400'}`}>
@@ -144,14 +144,14 @@ export default function PortfolioValueChart() {
         </div>
 
         {/* Time period selector */}
-        <div className="flex gap-1 bg-secondary-100 dark:bg-secondary-800 p-1 rounded-lg">
+        <div className="flex gap-1 bg-secondary-100 dark:bg-secondary-900 p-1 rounded-lg border border-secondary-200/80 dark:border-secondary-800">
           {TIME_PERIODS.map(period => (
             <button
               key={period.label}
               onClick={() => setSelectedPeriod(period.days)}
               className={`px-3 py-1.5 text-sm font-medium rounded transition-colors cursor-pointer ${
                 selectedPeriod === period.days
-                  ? 'bg-white dark:bg-secondary-700 text-secondary-900 dark:text-secondary-100 shadow-sm'
+                  ? 'bg-secondary-950 dark:bg-white text-white dark:text-secondary-950 shadow-sm'
                   : 'text-secondary-600 dark:text-secondary-400 hover:text-secondary-900 dark:hover:text-secondary-200'
               }`}
             >
@@ -166,19 +166,19 @@ export default function PortfolioValueChart() {
         <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-              <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+              <stop offset="5%" stopColor="#0f766e" stopOpacity={0.24} />
+              <stop offset="95%" stopColor="#0f766e" stopOpacity={0} />
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
           <XAxis
             dataKey="date"
-            stroke="#9ca3af"
+            stroke="#94a3b8"
             style={{ fontSize: '12px' }}
             tickLine={false}
           />
           <YAxis
-            stroke="#9ca3af"
+            stroke="#94a3b8"
             style={{ fontSize: '12px' }}
             tickLine={false}
             tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
@@ -190,8 +190,8 @@ export default function PortfolioValueChart() {
           <Area
             type="monotone"
             dataKey="value"
-            stroke="#3b82f6"
-            strokeWidth={3}
+            stroke="#0f766e"
+            strokeWidth={2.5}
             fillOpacity={1}
             fill="url(#colorValue)"
             name="Portfolio Value"
@@ -200,25 +200,25 @@ export default function PortfolioValueChart() {
       </ResponsiveContainer>
 
       {/* Summary stats */}
-      <div className="mt-6 pt-6 border-t border-secondary-200 dark:border-secondary-700 grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="mt-5 pt-5 border-t border-secondary-200 dark:border-secondary-800 grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div>
-          <p className="text-xs text-secondary-500 dark:text-secondary-400 uppercase">Start Date</p>
+          <p className="text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase">Start Date</p>
           <p className="text-sm font-semibold text-secondary-900 dark:text-secondary-100 mt-1">
             {new Date(historyData.start_date).toLocaleDateString()}
           </p>
         </div>
         <div>
-          <p className="text-xs text-secondary-500 dark:text-secondary-400 uppercase">Days Tracked</p>
+          <p className="text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase">Days Tracked</p>
           <p className="text-sm font-semibold text-secondary-900 dark:text-secondary-100 mt-1">{historyData.total_days}</p>
         </div>
         <div>
-          <p className="text-xs text-secondary-500 dark:text-secondary-400 uppercase">Current Value</p>
+          <p className="text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase">Current Value</p>
           <p className="text-sm font-semibold text-secondary-900 dark:text-secondary-100 mt-1">
             {formatCurrency(historyData.current_value)}
           </p>
         </div>
         <div>
-          <p className="text-xs text-secondary-500 dark:text-secondary-400 uppercase">Period Change</p>
+          <p className="text-[11px] font-semibold text-secondary-500 dark:text-secondary-400 uppercase">Period Change</p>
           <p className={`text-sm font-semibold mt-1 ${isPositive ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400'}`}>
             {isPositive ? '+' : ''}{valueChangePct.toFixed(2)}%
           </p>
