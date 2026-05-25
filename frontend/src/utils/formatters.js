@@ -24,7 +24,11 @@ export const formatPercent = (value) => {
 export const formatDate = (date) => {
   if (!date) return '-';
 
-  return new Date(date).toLocaleDateString('en-US', {
+  const dateValue = typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date)
+    ? new Date(`${date}T00:00:00`)
+    : new Date(date);
+
+  return dateValue.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',

@@ -5,7 +5,7 @@ import Card from '../components/common/Card';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorMessage from '../components/common/ErrorMessage';
 import ImportModal from '../components/import/ImportModal';
-import { formatCurrency, formatNumber } from '../utils/formatters';
+import { formatCurrency, formatDate, formatNumber } from '../utils/formatters';
 
 export default function Transactions() {
   const [selectedSymbol, setSelectedSymbol] = useState('ALL');
@@ -331,11 +331,7 @@ export default function Transactions() {
                   return (
                     <tr key={transaction.id} className="hover:bg-secondary-50 dark:hover:bg-secondary-800/50 transition-colors">
                       <td className="px-4 py-3 whitespace-nowrap text-sm text-secondary-900 dark:text-secondary-100">
-                        {new Date(transaction.transaction_date).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric'
-                        })}
+                        {formatDate(transaction.transaction_date)}
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
                         <div className="text-sm font-bold text-secondary-900 dark:text-secondary-100">{transaction.symbol || '-'}</div>

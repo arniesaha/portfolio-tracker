@@ -32,12 +32,24 @@ data:
             proxy_send_timeout 600s;
         }
 
+        # Vite assets are content-hashed, so these are safe to cache
+        # aggressively.
         location /assets/ {
             expires 1y;
             add_header Cache-Control "public, immutable";
         }
 
+        # The SPA shell points to the current content-hashed JS bundle. Do not
+        # let mobile browsers keep an old index.html after a deployment.
+        location = /index.html {
+            expires -1;
+            add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate";
+            try_files /index.html =404;
+        }
+
         location / {
+            expires -1;
+            add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate";
             try_files $uri $uri/ /index.html;
         }
 
