@@ -192,13 +192,99 @@ def test_dedup_contributions():
     session.close()
 
 
+def test_fhsa_tfr_in_import_and_dedup():
+    """FHSA TD TFR-IN imports once; same-file re-import is deduplicated."""
+    session = Session()
+
+    csv_content = """As of Date,2026-01-24 21:59:31
+Account,TD Direct Investing - FHSA
+
+Trade Date,Settle Date,Description,Action,Quantity,Price,Commission,Net Amount,Currency
+20 Jan 2026,22 Jan 2026,TRANSFER IN,TFR-IN,,,,"3000.00",CAD
+"""
+
+    result1 = ImportService.import_transactions(
+        db=session, content=csv_content, platform=ImportPlatform.TD_DIRECT,
+        account_type="FHSA"
+    )
+    assert result1.success, f"Initial import failed: {result1.errors}"
+    assert result1.transactions_imported == 1, (
+        f"Expected 1 imported, got {result1.transactions_imported}"
+    )
+
+    result2 = ImportService.import_transactions(
+        db=session, content=csv_content, platform=ImportPlatform.TD_DIRECT,
+        account_type="FHSA"
+    )
+    assert result2.success
+    assert result2.transactions_imported == 0, (
+        f"Expected 0 imports on re-import, got {result2.transactions_imported}"
+    )
+    assert result2.duplicates_skipped == 1, (
+        f"Expected 1 duplicate, got {result2.duplicates_skipped}"
+    )
+    print("  PASS: FHSA TFR-IN import deduplication")
+
+    session.close()
+
+
+def test_td_fhsa_tfr_in_classified_as_contribution():
+    """FHSA TFR-IN must be classified as CONTRIBUTION, not TRANSFER."""
+    csv_content = """As of Date,2026-01-24 21:59:31
+Account,TD Direct Investing - FHSA
+
+Trade Date,Settle Date,Description,Action,Quantity,Price,Commission,Net Amount,Currency
+15 Jan 2026,17 Jan 2026,CONTRIBUTION,CONT,,,,"2000.00",CAD
+20 Jan 2026,22 Jan 2026,TRANSFER IN,TFR-IN,,,,"3000.00",CAD
+"""
+    transactions, warnings = ImportService.parse_td_direct_csv(csv_content, account_type="FHSA")
+
+    contributions = [t for t in transactions if t.transaction_category == "CONTRIBUTION"]
+    transfers = [t for t in transactions if t.transaction_category == "TRANSFER"]
+
+    assert len(contributions) == 2, f"Expected 2 contributions, got {len(contributions)}"
+    assert len(transfers) == 0, f"Expected 0 transfers, got {len(transfers)}"
+    tfr_in = [t for t in contributions if t.transaction_type == "TFR_IN"]
+    assert len(tfr_in) == 1
+    assert tfr_in[0].transaction_category == "CONTRIBUTION"
+    assert tfr_in[0].amount == Decimal("3000.00")
+    assert tfr_in[0].account_type == "FHSA"
+    assert tfr_in[0].currency == "CAD"
+    assert tfr_in[0].raw_description == "TRANSFER IN"
+    assert warnings == [], f"Expected no warnings, got {warnings}"
+    print("  PASS: FHSA TFR-IN classified as CONTRIBUTION")
+
+
+def test_td_non_fhsa_tfr_in_remains_transfer():
+    """RRSP and TFSA TFR-IN must remain TRANSFER (control regression)."""
+    csv_content = """As of Date,2026-01-24 21:59:31
+Account,TD Direct Investing - 71XW74J
+
+Trade Date,Settle Date,Description,Action,Quantity,Price,Commission,Net Amount,Currency
+15 Jan 2026,17 Jan 2026,TRANSFER IN,TFR-IN,,,,"1500.00",CAD
+"""
+    for acct in ("RRSP", "TFSA", "NON_REG", None):
+        transactions, warnings = ImportService.parse_td_direct_csv(csv_content, account_type=acct)
+        contributions = [t for t in transactions if t.transaction_category == "CONTRIBUTION"]
+        transfers = [t for t in transactions if t.transaction_category == "TRANSFER"]
+        assert len(contributions) == 0, f"{acct}: expected 0 contributions, got {len(contributions)}"
+        assert len(transfers) == 1, f"{acct}: expected 1 transfer, got {len(transfers)}"
+        assert transfers[0].transaction_type == "TFR_IN"
+        assert transfers[0].amount == Decimal("1500.00")
+        assert warnings == [], f"{acct}: expected no warnings, got {warnings}"
+    print("  PASS: Non-FHSA TFR-IN remains TRANSFER (RRSP + TFSA + NON_REG + None)")
+
+
 if __name__ == "__main__":
     print("Testing contribution tracking...\n")
 
     test_wealthsimple_contribution_parsing()
     test_wealthsimple_account_type_from_filename()
     test_td_contribution_parsing()
+    test_td_fhsa_tfr_in_classified_as_contribution()
+    test_td_non_fhsa_tfr_in_remains_transfer()
     test_import_and_query_contributions()
     test_dedup_contributions()
+    test_fhsa_tfr_in_import_and_dedup()
 
     print("\nAll tests passed!")

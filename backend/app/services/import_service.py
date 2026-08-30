@@ -206,10 +206,16 @@ class ImportService:
                     description = row.get('Description', '').strip()
                     row_currency = row.get('Currency', '').strip() or 'CAD'
 
+                    # FHSA: TD labels cash deposits as TFR-IN; classify as CONTRIBUTION
+                    if account_type == "FHSA":
+                        transaction_category = "CONTRIBUTION"
+                    else:
+                        transaction_category = "TRANSFER"
+
                     transactions.append(ParsedTransaction(
                         date=trade_date,
                         transaction_type="TFR_IN",
-                        transaction_category="TRANSFER",
+                        transaction_category=transaction_category,
                         amount=abs(net_amount),
                         currency=row_currency,
                         source=ImportPlatform.TD_DIRECT.value,
